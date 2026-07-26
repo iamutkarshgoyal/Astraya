@@ -114,7 +114,8 @@ browser and must sync into PostgreSQL after authentication.
 Product image files must live in `images/products/<product-slug>/` and are
 served from GitHub through jsDelivr CDN. Keep the CDN settings in the backend
 configuration and follow `docs/CDN_IMAGES.md` for upload and cache refresh
-steps.
+steps. The GitHub repository or image asset repository must be public for
+jsDelivr to serve the files.
 
 Default local database settings:
 

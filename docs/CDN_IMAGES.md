@@ -4,6 +4,9 @@ Astraya serves product images from GitHub through jsDelivr CDN. The backend
 keeps the existing API shape and generates product image URLs from one CDN
 configuration.
 
+The GitHub repository that stores `images/products/` must be public. jsDelivr
+cannot serve files from a private GitHub repository.
+
 ## Configuration
 
 Set these values in `.env` or the deployment environment:

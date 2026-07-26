@@ -102,7 +102,8 @@ sync into PostgreSQL after the customer signs in.
 
 Product image files live in `images/products/<product-slug>/` and are served
 from GitHub through jsDelivr CDN. See `docs/CDN_IMAGES.md` for the upload,
-commit, push, URL, and cache refresh workflow.
+commit, push, URL, and cache refresh workflow. The GitHub repository or image
+asset repository must be public for jsDelivr to serve the files.
 
 Default local settings:
 
