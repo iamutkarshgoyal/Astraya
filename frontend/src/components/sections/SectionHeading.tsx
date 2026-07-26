@@ -20,11 +20,12 @@ export function SectionHeading({ eyebrow, title, text, action, className }: Sect
     >
       <div className="max-w-2xl">
         {eyebrow && (
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-astraya-gold">
+          <p className="mb-3 font-button text-xs font-bold uppercase tracking-[0.22em] text-astraya-gold">
             {eyebrow}
           </p>
         )}
-        <h2 className="font-display text-3xl leading-tight text-astraya-navy md:text-5xl">
+        <div className="mb-4 h-px w-20 bg-astraya-gold/70" aria-hidden="true" />
+        <h2 className="font-display text-3xl font-semibold leading-tight tracking-[0.04em] text-astraya-navy md:text-5xl">
           {title}
         </h2>
         {text && <p className="mt-3 text-base leading-7 text-astraya-text/70">{text}</p>}

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Heart, Menu, Search, ShoppingBag, UserRound, X } from 'lucide-react';
-import { Link, NavLink } from 'react-router';
+import { Link, NavLink, useLocation } from 'react-router';
 
 import { BrandMark } from '@/components/brand/BrandMark';
 import { Button } from '@/components/ui/button';
@@ -18,42 +19,72 @@ const primaryNavigation: NavigationItem[] = [
   { label: 'Contact', href: '/contact' },
 ];
 
-function navLinkClass({ isActive }: { isActive: boolean }) {
-  return cn(
-    'text-sm font-semibold text-astraya-navy/78 transition-colors hover:text-astraya-gold',
-    isActive && 'text-astraya-gold',
-  );
+function navLinkClass(isOverHero: boolean) {
+  return ({ isActive }: { isActive: boolean }) =>
+    cn(
+      'group relative font-button text-[0.78rem] font-semibold uppercase tracking-[0.16em] transition-colors after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-astraya-gold after:transition-transform hover:after:scale-x-100',
+      isOverHero ? 'text-white/86 hover:text-astraya-gold' : 'text-astraya-navy/78 hover:text-astraya-darkGold',
+      isActive && 'text-astraya-gold after:scale-x-100',
+    );
 }
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const location = useLocation();
+  const prefersReducedMotion = useReducedMotion();
   const { isAuthenticated, logout, user } = useAuth();
   const { itemCount } = useCart();
   const { wishlistCount } = useWishlist();
   const accountHref = user?.role === 'admin' ? '/admin' : '/profile';
+  const isOverHero = location.pathname === '/' && !hasScrolled;
+
+  useEffect(() => {
+    const updateScrollState = () => setHasScrolled(window.scrollY > 8);
+    updateScrollState();
+    window.addEventListener('scroll', updateScrollState, { passive: true });
+    return () => window.removeEventListener('scroll', updateScrollState);
+  }, []);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-astraya-navy/10 bg-white/90 backdrop-blur-xl">
+    <header
+      className={cn(
+        'fixed inset-x-0 top-0 z-50 border-b transition-all duration-300',
+        hasScrolled
+          ? 'border-astraya-border/85 bg-astraya-ivory/88 shadow-card backdrop-blur-xl'
+          : 'border-transparent bg-transparent',
+      )}
+    >
       <div className="container flex min-h-20 items-center justify-between gap-4">
-        <BrandMark />
+        <BrandMark inverse={isOverHero} />
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary navigation">
           {primaryNavigation.map((item) => (
-            <NavLink key={item.href} className={navLinkClass} to={item.href}>
+            <NavLink key={item.href} className={navLinkClass(isOverHero)} to={item.href}>
               {item.label}
             </NavLink>
           ))}
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
-          <Button asChild size="icon" variant="ghost" aria-label="Search Astraya">
+          <Button
+            asChild
+            className={cn(isOverHero && 'text-white hover:text-astraya-gold')}
+            size="icon"
+            variant="ghost"
+            aria-label="Search Astraya"
+          >
             <Link to="/shop">
               <Search size={19} aria-hidden="true" />
             </Link>
           </Button>
           <Button
             asChild
-            className="relative"
+            className={cn('relative', isOverHero && 'text-white hover:text-astraya-gold')}
             size="icon"
             variant="ghost"
             aria-label="Open wishlist"
@@ -69,7 +100,7 @@ export function SiteHeader() {
           </Button>
           <Button
             asChild
-            className="relative"
+            className={cn('relative', isOverHero && 'text-white hover:text-astraya-gold')}
             size="icon"
             variant="ghost"
             aria-label="Open cart"
@@ -106,7 +137,7 @@ export function SiteHeader() {
         </div>
 
         <Button
-          className="lg:hidden"
+          className={cn('lg:hidden', isOverHero && 'text-white hover:text-astraya-gold')}
           size="icon"
           variant="ghost"
           aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -117,61 +148,69 @@ export function SiteHeader() {
         </Button>
       </div>
 
-      {isMenuOpen && (
-        <div className="border-t border-astraya-navy/10 bg-white lg:hidden">
-          <nav className="container grid gap-1 py-4" aria-label="Mobile navigation">
-            {primaryNavigation.map((item) => (
-              <NavLink
-                key={item.href}
-                className="rounded-md px-3 py-3 text-sm font-semibold text-astraya-navy hover:bg-astraya-ivory"
-                to={item.href}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-            <div className="mt-3 grid grid-cols-3 gap-2 border-t border-astraya-navy/10 pt-4">
-              <Button asChild variant="outline">
-                <Link to="/wishlist" onClick={() => setIsMenuOpen(false)}>
-                  <Heart size={17} aria-hidden="true" />
-                  {wishlistCount > 0 ? `Wishlist ${wishlistCount}` : 'Wishlist'}
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link to="/cart" onClick={() => setIsMenuOpen(false)}>
-                  <ShoppingBag size={17} aria-hidden="true" />
-                  {itemCount > 0 ? `Cart ${itemCount}` : 'Cart'}
-                </Link>
-              </Button>
-              {isAuthenticated ? (
-                <Button asChild variant="primary">
-                  <Link to={accountHref} onClick={() => setIsMenuOpen(false)}>
-                    Account
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            className="border-t border-astraya-border bg-astraya-card/96 shadow-card backdrop-blur-xl lg:hidden"
+            initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
+            animate={prefersReducedMotion ? undefined : { height: 'auto', opacity: 1 }}
+            exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+          >
+            <nav className="container grid gap-1 py-4" aria-label="Mobile navigation">
+              {primaryNavigation.map((item) => (
+                <NavLink
+                  key={item.href}
+                  className="rounded-md px-3 py-3 font-button text-sm font-semibold uppercase tracking-[0.12em] text-astraya-navy transition hover:bg-astraya-ivory hover:text-astraya-darkGold"
+                  to={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+              <div className="mt-3 grid grid-cols-3 gap-2 border-t border-astraya-border pt-4">
+                <Button asChild variant="outline">
+                  <Link to="/wishlist" onClick={() => setIsMenuOpen(false)}>
+                    <Heart size={17} aria-hidden="true" />
+                    {wishlistCount > 0 ? `Wishlist ${wishlistCount}` : 'Wishlist'}
                   </Link>
                 </Button>
-              ) : (
-                <Button asChild variant="primary">
-                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    Login
+                <Button asChild variant="outline">
+                  <Link to="/cart" onClick={() => setIsMenuOpen(false)}>
+                    <ShoppingBag size={17} aria-hidden="true" />
+                    {itemCount > 0 ? `Cart ${itemCount}` : 'Cart'}
                   </Link>
+                </Button>
+                {isAuthenticated ? (
+                  <Button asChild variant="primary">
+                    <Link to={accountHref} onClick={() => setIsMenuOpen(false)}>
+                      Account
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button asChild variant="primary">
+                    <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                      Login
+                    </Link>
+                  </Button>
+                )}
+              </div>
+              {isAuthenticated && (
+                <Button
+                  className="mt-2 w-full"
+                  variant="outline"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    logout();
+                  }}
+                >
+                  Sign out
                 </Button>
               )}
-            </div>
-            {isAuthenticated && (
-              <Button
-                className="mt-2 w-full"
-                variant="outline"
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  logout();
-                }}
-              >
-                Sign out
-              </Button>
-            )}
-          </nav>
-        </div>
-      )}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

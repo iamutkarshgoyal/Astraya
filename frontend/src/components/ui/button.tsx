@@ -5,15 +5,18 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 
 const buttonVariants = cva(
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition-colors disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-5 py-2.5 font-button text-sm font-semibold tracking-[0.08em] transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0',
   {
     variants: {
       variant: {
-        primary: 'bg-astraya-navy text-white shadow-luxury hover:bg-[#123060]',
-        gold: 'bg-astraya-gold text-astraya-ink hover:bg-[#b8892c]',
+        primary:
+          'border border-astraya-navy bg-astraya-navy text-white shadow-card hover:border-astraya-gold hover:bg-[#142a55] hover:shadow-glow',
+        gold:
+          'border border-astraya-gold bg-astraya-gold text-astraya-ink shadow-gold-soft hover:border-astraya-darkGold hover:bg-astraya-darkGold hover:text-white hover:shadow-glow',
         outline:
-          'border border-astraya-gold/60 bg-white/70 text-astraya-navy hover:bg-astraya-ivory',
-        ghost: 'text-astraya-navy hover:bg-astraya-ivory',
+          'border border-astraya-gold/70 bg-astraya-card/75 text-astraya-navy shadow-sm hover:border-astraya-gold hover:bg-astraya-ivory hover:shadow-glow',
+        ghost:
+          'border border-transparent text-astraya-navy hover:border-astraya-gold/40 hover:bg-astraya-card/70 hover:text-astraya-darkGold',
       },
       size: {
         default: 'h-11',

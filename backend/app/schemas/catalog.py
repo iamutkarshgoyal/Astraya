@@ -1,7 +1,10 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from app.utils.cdn_images import get_product_image_urls
 
 
 class CategoryBase(BaseModel):
@@ -110,7 +113,89 @@ class ProductRead(ProductBase):
     created_at: datetime
     updated_at: datetime | None = None
 
+    @model_validator(mode="before")
+    @classmethod
+    def apply_cdn_image_urls(cls, value: Any) -> Any:
+        slug = _read_attr(value, "slug")
+        if not slug:
+            return value
+
+        images = sorted(
+            list(_read_attr(value, "images", []) or []),
+            key=lambda image: _read_attr(image, "display_order", 0),
+        )
+        cdn_urls = get_product_image_urls(str(slug), len(images))
+        image_payloads = [
+            _product_image_payload(image, cdn_urls[index])
+            for index, image in enumerate(images)
+        ]
+
+        if not image_payloads:
+            image_payloads = [
+                {
+                    "id": 0,
+                    "image_url": cdn_urls[0],
+                    "alt_text": f"{_read_attr(value, 'name', 'Astraya candle')} product image",
+                    "display_order": 0,
+                    "is_primary": True,
+                }
+            ]
+
+        primary_index = next(
+            (
+                index
+                for index, image in enumerate(image_payloads)
+                if image.get("is_primary")
+            ),
+            0,
+        )
+
+        return {
+            "id": _read_attr(value, "id"),
+            "category_id": _read_attr(value, "category_id"),
+            "name": _read_attr(value, "name"),
+            "slug": slug,
+            "sku": _read_attr(value, "sku"),
+            "short_description": _read_attr(value, "short_description"),
+            "description": _read_attr(value, "description"),
+            "price": _read_attr(value, "price"),
+            "discount_price": _read_attr(value, "discount_price"),
+            "stock_quantity": _read_attr(value, "stock_quantity"),
+            "burn_time_minutes": _read_attr(value, "burn_time_minutes"),
+            "wax_type": _read_attr(value, "wax_type"),
+            "fragrance": _read_attr(value, "fragrance"),
+            "ingredients": _read_attr(value, "ingredients"),
+            "weight_grams": _read_attr(value, "weight_grams"),
+            "dimensions": _read_attr(value, "dimensions"),
+            "is_featured": _read_attr(value, "is_featured"),
+            "is_best_seller": _read_attr(value, "is_best_seller"),
+            "is_active": _read_attr(value, "is_active"),
+            "category": _read_attr(value, "category"),
+            "images": image_payloads,
+            "primary_image_url": image_payloads[primary_index]["image_url"],
+            "average_rating": _read_attr(value, "average_rating", 0),
+            "review_count": _read_attr(value, "review_count", 0),
+            "created_at": _read_attr(value, "created_at"),
+            "updated_at": _read_attr(value, "updated_at"),
+        }
+
 
 class ProductListResponse(BaseModel):
     items: list[ProductRead]
     total: int
+
+
+def _read_attr(value: Any, name: str, default: Any = None) -> Any:
+    if isinstance(value, dict):
+        return value.get(name, default)
+    return getattr(value, name, default)
+
+
+def _product_image_payload(image: Any, cdn_url: str) -> dict[str, Any]:
+    return {
+        "id": _read_attr(image, "id"),
+        "image_url": cdn_url,
+        "alt_text": _read_attr(image, "alt_text", "Astraya candle product image"),
+        "display_order": _read_attr(image, "display_order", 0),
+        "is_primary": _read_attr(image, "is_primary", False),
+    }

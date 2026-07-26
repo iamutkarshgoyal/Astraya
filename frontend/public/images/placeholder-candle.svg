@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-labelledby="title desc">
+  <title id="title">Astraya candle placeholder</title>
+  <desc id="desc">A simple Astraya candle placeholder with gold celestial details.</desc>
+  <rect width="900" height="900" fill="#FAF6EF"/>
+  <rect x="140" y="140" width="620" height="620" rx="8" fill="#FFFDF9" stroke="#E7DCC7" stroke-width="3"/>
+  <path d="M450 255c34 44 48 78 48 118 0 50-36 87-83 87-39 0-71-31-71-73 0-45 29-79 106-132Z" fill="#D4B06A" opacity=".85"/>
+  <path d="M342 440h216l-22 220H364l-22-220Z" fill="#0D2147"/>
+  <path d="M374 478h152" stroke="#D4B06A" stroke-width="8" stroke-linecap="round"/>
+  <path d="M395 520h110" stroke="#E7DCC7" stroke-width="5" stroke-linecap="round"/>
+  <path d="M450 220v42" stroke="#0D2147" stroke-width="7" stroke-linecap="round"/>
+  <path d="m614 248 10 25 26 10-26 10-10 25-10-25-26-10 26-10 10-25Z" fill="#D4B06A"/>
+  <path d="m280 306 7 18 19 7-19 8-7 18-8-18-18-8 18-7 8-18Z" fill="#D4B06A"/>
+  <path d="m644 608 6 15 15 6-15 6-6 15-6-15-15-6 15-6 6-15Z" fill="#D4B06A"/>
+  <text x="450" y="735" text-anchor="middle" fill="#0D2147" font-family="Georgia, serif" font-size="54" letter-spacing="8">ASTRAYA</text>
+  <text x="450" y="780" text-anchor="middle" fill="#B88A2A" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">INSPIRED BY THE COSMOS</text>
+</svg>

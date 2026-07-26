@@ -1,6 +1,7 @@
 import { Heart, ShoppingBag, Star } from 'lucide-react';
 import { Link } from 'react-router';
 
+import { SmartImage } from '@/components/media/SmartImage';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -17,24 +18,25 @@ export function ProductCard({ product }: ProductCardProps) {
   const { isWishlisted, toggleWishlist } = useWishlist();
   const wished = isWishlisted(product.id);
   const saving = savingPercent(product);
+  const imageUrl = product.primary_image_url ?? product.images[0]?.image_url;
 
   return (
-    <article className="group overflow-hidden rounded-lg border border-astraya-navy/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-luxury">
+    <article className="group overflow-hidden rounded-lg border border-astraya-border bg-astraya-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-astraya-gold/70 hover:shadow-card">
       <Link className="block" to={`/products/${product.slug}`}>
-        <div className="relative aspect-[4/3] overflow-hidden bg-astraya-ivory">
-          <img
+        <div className="relative aspect-[4/3] overflow-hidden bg-astraya-cream">
+          <SmartImage
             alt={product.name}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-            src={product.primary_image_url ?? product.images[0]?.image_url}
+            src={imageUrl}
           />
           <div className="absolute left-3 top-3 flex flex-wrap gap-2">
             {product.is_best_seller && (
-              <span className="rounded-sm bg-astraya-navy px-2 py-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-white">
+              <span className="rounded-sm bg-astraya-navy px-2 py-1 font-button text-[0.62rem] font-bold uppercase tracking-[0.12em] text-white">
                 Bestseller
               </span>
             )}
             {saving && (
-              <span className="rounded-sm bg-astraya-gold px-2 py-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-astraya-ink">
+              <span className="rounded-sm bg-astraya-gold px-2 py-1 font-button text-[0.62rem] font-bold uppercase tracking-[0.12em] text-astraya-ink">
                 {saving}% off
               </span>
             )}
@@ -43,13 +45,13 @@ export function ProductCard({ product }: ProductCardProps) {
       </Link>
       <div className="grid gap-4 p-5">
         <div>
-          <div className="mb-2 flex items-center gap-1 text-xs font-semibold text-astraya-gold">
+          <div className="mb-2 flex items-center gap-1 font-button text-xs font-semibold text-astraya-gold">
             <Star size={14} fill="currentColor" aria-hidden="true" />
             <span>{product.average_rating.toFixed(1)}</span>
             <span className="text-astraya-text/45">({product.review_count})</span>
           </div>
           <Link to={`/products/${product.slug}`}>
-            <h3 className="font-serif text-2xl leading-tight text-astraya-navy transition hover:text-astraya-gold">
+            <h3 className="font-serif text-2xl leading-tight text-astraya-navy transition hover:text-astraya-darkGold">
               {product.name}
             </h3>
           </Link>
@@ -59,7 +61,9 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-lg font-bold text-astraya-navy">{formatPrice(activePrice(product))}</p>
+            <p className="font-button text-lg font-bold text-astraya-navy">
+              {formatPrice(activePrice(product))}
+            </p>
             {product.discount_price && (
               <p className="text-sm text-astraya-text/45 line-through">
                 {formatPrice(product.price)}

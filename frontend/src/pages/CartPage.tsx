@@ -2,6 +2,7 @@ import { Trash2 } from 'lucide-react';
 import { Link } from 'react-router';
 
 import { QuantityStepper } from '@/components/commerce/QuantityStepper';
+import { SmartImage } from '@/components/media/SmartImage';
 import { EmptyState } from '@/components/sections/EmptyState';
 import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,12 @@ export function CartPage() {
                 key={item.product.id}
                 className="grid gap-4 rounded-lg border border-astraya-navy/10 bg-white p-4 shadow-sm sm:grid-cols-[9rem_1fr_auto]"
               >
-                <img
-                  alt={item.product.name}
-                  className="aspect-square w-full rounded-md object-cover"
-                  src={item.product.primary_image_url ?? item.product.images[0]?.image_url}
-                />
+                <div className="relative aspect-square w-full overflow-hidden rounded-md bg-astraya-cream">
+                  <SmartImage
+                    alt={item.product.name}
+                    src={item.product.primary_image_url ?? item.product.images[0]?.image_url}
+                  />
+                </div>
                 <div>
                   <Link to={`/products/${item.product.slug}`}>
                     <h2 className="font-serif text-2xl text-astraya-navy">{item.product.name}</h2>

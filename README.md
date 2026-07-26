@@ -30,11 +30,20 @@ CORS Middleware, Pytest
 
 ## Brand Colors
 
-- Gold: `#C89B3C`
-- Dark Navy: `#0B214A`
-- Ivory: `#FAF7F2`
-- White: `#FFFFFF`
-- Dark Text: `#202020`
+- Background: `#FAF6EF`, `#F7F2E9`
+- Cards: `#FFFDF9`
+- Gold: `#D4B06A`
+- Dark Gold: `#B88A2A`
+- Navy: `#0D2147`
+- Text: `#3E3E3E`
+- Border: `#E7DCC7`
+
+## Public Contact
+
+- Email: `astraya.candles@gmail.com`
+- WhatsApp: `https://wa.me/918958383707`
+- The frontend contact form validates locally and opens WhatsApp with an
+  encoded message instead of submitting to the backend contact endpoint.
 
 ## Project Structure
 
@@ -90,6 +99,10 @@ before starting the API.
 PostgreSQL is the source of truth for application data.
 Anonymous pre-login cart and wishlist choices are temporary browser state and
 sync into PostgreSQL after the customer signs in.
+
+Product image files live in `images/products/<product-slug>/` and are served
+from GitHub through jsDelivr CDN. See `docs/CDN_IMAGES.md` for the upload,
+commit, push, URL, and cache refresh workflow.
 
 Default local settings:
 

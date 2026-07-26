@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     tax_rate_percent: int = 5
     admin_email: str = "admin@astraya.in"
     admin_password: str = "Admin@12345"
+    cdn_base_url: str = ""
+    cdn_github_username: str = "iamutkarshgoyal"
+    cdn_github_repository: str = "Astraya"
+    cdn_github_branch: str = "main"
+    cdn_image_extension: str = "jpg"
 
     @property
     def sqlalchemy_database_uri(self) -> str:
@@ -46,6 +51,16 @@ class Settings(BaseSettings):
             for origin in self.backend_cors_origins.split(",")
             if origin.strip()
         ]
+
+    @property
+    def product_images_cdn_base_url(self) -> str:
+        if self.cdn_base_url.strip():
+            return self.cdn_base_url.strip().rstrip("/")
+        return (
+            "https://cdn.jsdelivr.net/gh/"
+            f"{self.cdn_github_username}/{self.cdn_github_repository}"
+            f"@{self.cdn_github_branch}/images/products"
+        )
 
     @property
     def is_production(self) -> bool:

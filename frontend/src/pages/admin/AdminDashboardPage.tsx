@@ -130,7 +130,7 @@ export function AdminDashboardPage() {
     const form = new FormData(event.currentTarget);
     const name = String(form.get('name') ?? '');
     const slug = String(form.get('slug') || slugify(name));
-    const imageUrl = String(form.get('image_url') || '/images/products/lunar-bloom-soy-candle.png');
+    const imageUrl = String(form.get('image_url') || 'lunar-bloom-soy-candle/1.jpg');
     await runAdminAction(
       () =>
         adminService.createProduct({
@@ -255,7 +255,7 @@ export function AdminDashboardPage() {
                 <Input name="wax_type" placeholder="Wax type" />
                 <Input name="fragrance" placeholder="Fragrance notes" />
                 <Input name="dimensions" placeholder="Dimensions" />
-                <Input className="md:col-span-3" name="image_url" placeholder="/images/products/example.png" />
+                <Input className="md:col-span-3" name="image_url" placeholder="product-slug/1.jpg" />
               </div>
               <Input name="short_description" placeholder="Short description" required />
               <Textarea name="description" placeholder="Full description" required />

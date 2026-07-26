@@ -47,18 +47,27 @@ Visual direction:
 
 Colors:
 
-- Gold: `#C89B3C`
-- Dark Navy: `#0B214A`
-- Ivory: `#FAF7F2`
+- Background: `#FAF6EF`, `#F7F2E9`
+- Cards: `#FFFDF9`
+- Gold: `#D4B06A`
+- Dark Gold: `#B88A2A`
+- Navy: `#0D2147`
+- Text: `#3E3E3E`
+- Border: `#E7DCC7`
 - White: `#FFFFFF`
-- Dark Text: `#202020`
 
 Typography:
 
-- Playfair Display
-- Cormorant Garamond
-- Inter
-- Poppins
+- Headings: Cinzel, Playfair Display, Cormorant Garamond
+- Body: Lora, Libre Baskerville
+- Buttons: Poppins
+
+Public contact details:
+
+- Email: `astraya.candles@gmail.com`
+- WhatsApp: `https://wa.me/918958383707`
+- The frontend contact form validates locally and opens WhatsApp with an
+  encoded message. It must not call the backend contact endpoint.
 
 ## Folder Structure
 
@@ -102,6 +111,11 @@ databases.
 Anonymous pre-login cart and wishlist choices may live temporarily in the
 browser and must sync into PostgreSQL after authentication.
 
+Product image files must live in `images/products/<product-slug>/` and are
+served from GitHub through jsDelivr CDN. Keep the CDN settings in the backend
+configuration and follow `docs/CDN_IMAGES.md` for upload and cache refresh
+steps.
+
 Default local database settings:
 
 ```python
@@ -137,7 +151,7 @@ Tables:
 ## Completed Functionality
 
 - Full storefront: home, shop, categories, product detail, reviews, about,
-  contact, FAQ, privacy, and terms.
+  WhatsApp-first contact, FAQ, privacy, and terms.
 - Customer flows: signup, login, forgot/reset password, profile, cart,
   wishlist, checkout, and WhatsApp order confirmation handoff.
 - Admin dashboard: stats, products, categories, orders, customers, contact

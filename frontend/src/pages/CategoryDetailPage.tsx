@@ -2,6 +2,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Link, useParams } from 'react-router';
 
 import { ProductCard } from '@/components/catalog/ProductCard';
+import { SmartImage } from '@/components/media/SmartImage';
 import { EmptyState } from '@/components/sections/EmptyState';
 import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Button } from '@/components/ui/button';
@@ -41,11 +42,14 @@ export function CategoryDetailPage() {
     <div>
       <section className="relative bg-astraya-navy text-white">
         {data?.category.image_url && (
-          <img
-            alt={data.category.name}
-            className="absolute inset-0 h-full w-full object-cover opacity-45"
-            src={data.category.image_url}
-          />
+          <div className="absolute inset-0 opacity-45">
+            <SmartImage
+              alt={data.category.name}
+              className="h-full w-full object-cover"
+              loading="eager"
+              src={data.category.image_url}
+            />
+          </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-r from-astraya-navy via-astraya-navy/82 to-transparent" />
         <div className="container relative py-16">

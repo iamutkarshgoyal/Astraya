@@ -226,13 +226,13 @@ def seed_products(db: Session, categories: dict[str, Category], admin: User) -> 
         product = Product(category_id=categories[category_slug].id, **product_data)
         product.images = [
             ProductImage(
-                image_url=f"/images/products/{product_data['slug']}.png",
+                image_url=f"{product_data['slug']}/1.jpg",
                 alt_text=f"{product_data['name']} product image",
                 display_order=0,
                 is_primary=True,
             ),
             ProductImage(
-                image_url=f"/images/products/{product_data['slug']}-detail.png",
+                image_url=f"{product_data['slug']}/2.jpg",
                 alt_text=f"{product_data['name']} detail image",
                 display_order=1,
                 is_primary=False,

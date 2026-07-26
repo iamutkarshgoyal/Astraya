@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router';
 
 import { ProductCard } from '@/components/catalog/ProductCard';
 import { QuantityStepper } from '@/components/commerce/QuantityStepper';
+import { SmartImage } from '@/components/media/SmartImage';
 import { EmptyState } from '@/components/sections/EmptyState';
 import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Button } from '@/components/ui/button';
@@ -111,26 +112,22 @@ export function ProductDetailPage() {
 
         <section className="mt-8 grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <div className="aspect-[4/3] overflow-hidden rounded-lg border border-astraya-navy/10 bg-white">
-              <img
+            <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-astraya-navy/10 bg-white">
+              <SmartImage
                 alt={product.name}
                 className="h-full w-full object-cover"
-                src={
-                  activeImage ??
-                  product.primary_image_url ??
-                  '/images/products/lunar-bloom-soy-candle.png'
-                }
+                src={activeImage ?? product.primary_image_url ?? undefined}
               />
             </div>
             <div className="mt-3 grid grid-cols-4 gap-3">
               {images.map((image) => (
                 <button
                   key={image.id}
-                  className="aspect-[4/3] overflow-hidden rounded-md border border-astraya-navy/10 bg-white"
+                  className="relative aspect-[4/3] overflow-hidden rounded-md border border-astraya-navy/10 bg-white"
                   type="button"
                   onClick={() => setActiveImage(image.image_url)}
                 >
-                  <img
+                  <SmartImage
                     alt={image.alt_text}
                     className="h-full w-full object-cover"
                     src={image.image_url}

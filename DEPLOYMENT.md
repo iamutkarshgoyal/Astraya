@@ -24,6 +24,7 @@ ADMIN_PASSWORD=replace-with-a-strong-admin-password
 OWNER_WHATSAPP_PHONE=919876543210
 VITE_API_BASE_URL=https://api.example.com
 BACKEND_CORS_ORIGINS=https://shop.example.com
+CDN_BASE_URL=https://cdn.jsdelivr.net/gh/iamutkarshgoyal/Astraya@main/images/products
 ```
 
 Build and run:
@@ -42,6 +43,12 @@ Astraya uses PostgreSQL as the source of truth for users, catalog, cart,
 wishlist, orders, reviews, contact messages, and newsletter subscribers. The
 backend composes the SQLAlchemy URL with `quote_plus` so passwords such as
 `Hello@123` are encoded safely.
+
+## Product Images
+
+Product images are served through jsDelivr from GitHub. Upload assets under
+`images/products/<product-slug>/`, push them to the configured branch, and use
+`docs/CDN_IMAGES.md` for URL format and cache refresh details.
 
 Run migrations manually when needed:
 
