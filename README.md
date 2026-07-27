@@ -118,6 +118,14 @@ engine = create_engine(
 )
 ```
 
+Hosted PostgreSQL providers such as Neon can be used by setting
+`DATABASE_URL`. When this value is present, it overrides the individual
+`POSTGRES_*` fields:
+
+```bash
+DATABASE_URL=postgresql://USER:PASSWORD@HOST/DB?sslmode=require&channel_binding=require
+```
+
 Inside Docker, the backend uses `POSTGRES_HOST=postgres` because the database
 runs as the `postgres` Compose service. Passwords are encoded with
 `quote_plus`.
@@ -213,6 +221,9 @@ Production-style Compose:
 ```bash
 SECRET_KEY=replace-me ADMIN_PASSWORD=replace-me docker compose -f docker-compose.prod.yml up --build -d
 ```
+
+For a hosted database, add `DATABASE_URL` to your deployment environment or
+local `.env` file. Do not commit a real database URL with credentials.
 
 See `DEPLOYMENT.md` for environment variables and verification commands.
 

@@ -130,6 +130,13 @@ engine = create_engine(
 )
 ```
 
+Hosted PostgreSQL providers such as Neon should be configured with
+`DATABASE_URL`. When present, it overrides the individual `POSTGRES_*` fields:
+
+```bash
+DATABASE_URL=postgresql://USER:PASSWORD@HOST/DB?sslmode=require&channel_binding=require
+```
+
 Inside Docker, the backend must use `POSTGRES_HOST=postgres` because the
 database runs as the `postgres` Compose service. The backend settings must use
 `quote_plus` for the password so `Hello@123` is encoded safely in the SQLAlchemy
@@ -184,6 +191,8 @@ Tables:
 - Google login requires `GOOGLE_CLIENT_ID`.
 - Local password reset can expose the reset token when
   `EXPOSE_PASSWORD_RESET_TOKEN=true` and `ENVIRONMENT` is not `production`.
+- Hosted databases should use `DATABASE_URL` in the deployment environment. Do
+  not commit real database credentials.
 
 ## Local Commands
 

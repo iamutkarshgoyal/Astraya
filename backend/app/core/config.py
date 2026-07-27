@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     postgres_host: str = "localhost"
     postgres_port: int = 5432
     postgres_db: str = "postgres"
+    database_url: str = ""
     backend_cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     secret_key: str = "change-this-before-production"
     access_token_expire_minutes: int = 30
@@ -37,6 +38,17 @@ class Settings(BaseSettings):
 
     @property
     def sqlalchemy_database_uri(self) -> str:
+        if self.database_url.strip():
+            return self.database_url.strip().replace(
+                "postgresql://",
+                "postgresql+psycopg2://",
+                1,
+            ).replace(
+                "postgres://",
+                "postgresql+psycopg2://",
+                1,
+            )
+
         password = quote_plus(self.postgres_password)
         return (
             "postgresql+psycopg2://"
