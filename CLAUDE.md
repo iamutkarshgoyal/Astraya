@@ -196,7 +196,9 @@ Tables:
 - Netlify hosts the React frontend only. Deploy FastAPI separately, for example
   with the root `render.yaml` Blueprint, then set Netlify
   `VITE_API_BASE_URL` to the deployed backend URL and set backend
-  `BACKEND_CORS_ORIGINS` to the Netlify site origin.
+  `BACKEND_CORS_ORIGINS` to the Netlify site origin. Keep Render free-tier
+  migrations/seeding in `startCommand`; `preDeployCommand` is not supported on
+  free web services.
 
 ## Local Commands
 

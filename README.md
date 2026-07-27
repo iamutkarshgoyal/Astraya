@@ -227,7 +227,9 @@ local `.env` file. Do not commit a real database URL with credentials.
 
 Netlify should host only the React frontend. The FastAPI backend needs a web
 service host such as Render or Railway. A Render Blueprint is included in
-`render.yaml`; when creating the Render service, provide these secret values:
+`render.yaml`; it uses Render's free web service plan and runs migrations plus
+starter data seeding in the normal start command. When creating the Render
+service, provide these secret values:
 
 ```bash
 DATABASE_URL=<Neon pooled Postgres URL>
