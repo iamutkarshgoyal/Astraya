@@ -193,6 +193,10 @@ Tables:
   `EXPOSE_PASSWORD_RESET_TOKEN=true` and `ENVIRONMENT` is not `production`.
 - Hosted databases should use `DATABASE_URL` in the deployment environment. Do
   not commit real database credentials.
+- Netlify hosts the React frontend only. Deploy FastAPI separately, for example
+  with the root `render.yaml` Blueprint, then set Netlify
+  `VITE_API_BASE_URL` to the deployed backend URL and set backend
+  `BACKEND_CORS_ORIGINS` to the Netlify site origin.
 
 ## Local Commands
 

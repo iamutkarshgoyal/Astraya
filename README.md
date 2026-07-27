@@ -225,6 +225,23 @@ SECRET_KEY=replace-me ADMIN_PASSWORD=replace-me docker compose -f docker-compose
 For a hosted database, add `DATABASE_URL` to your deployment environment or
 local `.env` file. Do not commit a real database URL with credentials.
 
+Netlify should host only the React frontend. The FastAPI backend needs a web
+service host such as Render or Railway. A Render Blueprint is included in
+`render.yaml`; when creating the Render service, provide these secret values:
+
+```bash
+DATABASE_URL=<Neon pooled Postgres URL>
+ADMIN_PASSWORD=<strong admin password>
+BACKEND_CORS_ORIGINS=https://your-netlify-site.netlify.app
+```
+
+After Render deploys the backend, set this in Netlify and redeploy the
+frontend:
+
+```bash
+VITE_API_BASE_URL=https://your-render-backend.onrender.com
+```
+
 See `DEPLOYMENT.md` for environment variables and verification commands.
 
 ## Milestone Progress
