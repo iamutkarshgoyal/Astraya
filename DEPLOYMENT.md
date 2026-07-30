@@ -22,8 +22,8 @@ Create a `.env` file from `.env.example`, then set production secrets:
 SECRET_KEY=replace-with-a-long-random-value
 ADMIN_PASSWORD=replace-with-a-strong-admin-password
 OWNER_WHATSAPP_PHONE=919876543210
-VITE_API_BASE_URL=https://api.example.com
-BACKEND_CORS_ORIGINS=https://shop.example.com
+VITE_API_BASE_URL=/api
+BACKEND_CORS_ORIGINS=https://astrayacandles.com,https://www.astrayacandles.com
 CDN_BASE_URL=https://cdn.jsdelivr.net/gh/iamutkarshgoyal/Astraya@main/images/products
 ```
 
@@ -36,6 +36,35 @@ docker compose -f docker-compose.prod.yml up --build -d
 The production frontend is served by Nginx on `${FRONTEND_PORT:-8080}` and the
 backend is served on `${BACKEND_PORT:-8000}`. PostgreSQL data is stored in the
 `postgres_data` volume.
+
+## Custom Domain
+
+The canonical production URL is `https://astrayacandles.com`. The frontend
+metadata, sitemap, robots file, structured data, and backend CORS defaults use
+this apex domain. `https://www.astrayacandles.com` redirects to the apex domain.
+
+The domain did not resolve in public DNS on July 30, 2026. Complete these steps
+before announcing it:
+
+1. Add `astrayacandles.com` and `www.astrayacandles.com` in Netlify under
+   **Domain management**.
+2. Set `astrayacandles.com` as the primary domain.
+3. At the registrar, apply the exact apex and `www` DNS records shown by
+   Netlify, or delegate the domain to Netlify DNS.
+4. Wait for Netlify to issue the TLS certificate and verify both HTTPS URLs.
+5. Set the Render `BACKEND_CORS_ORIGINS` value to
+   `https://astrayacandles.com,https://www.astrayacandles.com` and redeploy.
+6. Keep Netlify `VITE_API_BASE_URL=/api` so API requests use the existing
+   proxy and do not expose a second public origin in frontend code.
+
+After DNS propagates, verify:
+
+```bash
+curl -I https://astrayacandles.com
+curl -I https://www.astrayacandles.com
+curl https://astrayacandles.com/robots.txt
+curl https://astrayacandles.com/sitemap.xml
+```
 
 ## Database
 

@@ -1,7 +1,6 @@
-import { type FormEvent, useEffect, useRef, useState } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { type FormEvent, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
-  ArrowDown,
   ArrowRight,
   Droplets,
   Flame,
@@ -9,6 +8,7 @@ import {
   Instagram,
   Leaf,
   Mail,
+  MessageCircle,
   ShieldCheck,
   Sparkles,
   Star,
@@ -18,25 +18,25 @@ import {
 import { Link } from 'react-router';
 
 import { BrandLoadingScreen } from '@/components/brand/BrandLoadingScreen';
-import { CandlePourScene } from '@/components/brand/CandlePourScene';
 import { CategoryCard } from '@/components/catalog/CategoryCard';
 import { ProductCard } from '@/components/catalog/ProductCard';
 import { SmartImage } from '@/components/media/SmartImage';
+import { CandleHero } from '@/components/sections/CandleHero';
 import { Reveal } from '@/components/sections/Reveal';
 import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAsyncData } from '@/hooks/useAsyncData';
+import { useLenisScroll } from '@/hooks/useLenisScroll';
 import { catalogService } from '@/services/catalog-service';
 import { engagementService } from '@/services/engagement-service';
 import {
   ASTRAYA_EMAIL,
   ASTRAYA_INSTAGRAM_HANDLE,
   ASTRAYA_INSTAGRAM_URL,
+  ASTRAYA_WHATSAPP_URL,
 } from '@/utils/brand';
 import { getErrorMessage } from '@/utils/errors';
-
-const heroImageUrl = '/images/editorial/candle-pouring.jpg';
 
 const highlights = [
   {
@@ -95,6 +95,39 @@ const testimonials = [
   ['The gift box felt thoughtful and premium from the moment it arrived.', 'Kavya M.'],
 ];
 
+const instagramGallery = [
+  {
+    alt: 'Pastel Astraya daisy candles in clear glass vessels',
+    baseName: '01-daisy-pastel',
+    postUrl: 'https://www.instagram.com/p/DbTTrbJyGDc/',
+  },
+  {
+    alt: 'Pink, sage, and blue Astraya star candles',
+    baseName: '02-star-candles',
+    postUrl: 'https://www.instagram.com/p/DbONuJOylA9/',
+  },
+  {
+    alt: 'Astraya glass candles decorated with colourful wax hearts',
+    baseName: '03-heart-candles',
+    postUrl: 'https://www.instagram.com/p/DbGiS20y5Wo/',
+  },
+  {
+    alt: 'Handcrafted Astraya daisy candle favours',
+    baseName: '04-daisy-closeup',
+    postUrl: 'https://www.instagram.com/p/DbBcQVOSnPg/',
+  },
+  {
+    alt: 'Pink Astraya heart tealight candle collection',
+    baseName: '05-tealights',
+    postUrl: 'https://www.instagram.com/p/Da-1wlkyv8R/',
+  },
+  {
+    alt: 'Astraya celestial floral tealight gift collection',
+    baseName: '06-cosmos-candle',
+    postUrl: 'https://www.instagram.com/p/Da-xsBnS9p7/',
+  },
+];
+
 function CatalogCardSkeleton({
   count,
   variant = 'product',
@@ -146,15 +179,8 @@ function CatalogUnavailable() {
 export function HomePage() {
   const [email, setEmail] = useState('');
   const [newsletterStatus, setNewsletterStatus] = useState<string | null>(null);
-  const heroRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
-  });
-  const heroImageY = useTransform(scrollYProgress, [0, 1], ['0%', '12%']);
-  const heroContentY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
-  const heroContentOpacity = useTransform(scrollYProgress, [0, 0.82], [1, 0]);
+  useLenisScroll();
 
   const { data, error, isLoading } = useAsyncData(
     async () => {
@@ -172,46 +198,6 @@ export function HomePage() {
     [],
   );
 
-  const productsForImages = [...(data?.featuredProducts ?? []), ...(data?.bestSellers ?? [])];
-  const imageForProduct = (slug: string, imageIndex = 0) => {
-    const product = productsForImages.find((item) => item.slug === slug);
-    return (
-      product?.images[imageIndex]?.image_url ??
-      product?.primary_image_url ??
-      product?.images[0]?.image_url
-    );
-  };
-  const shelfImages = [
-    [
-      'lunar-bloom-soy-candle',
-      'Lunar Bloom soy candle',
-      '/images/editorial/botanical-finishing.jpg',
-    ],
-    [
-      'celestial-oud-jar-candle',
-      'Celestial Oud amber jar candle',
-      '/images/editorial/wick-setting.jpg',
-    ],
-    [
-      'solstice-spice-candle',
-      'Solstice Spice soy candle',
-      '/images/editorial/soy-wax-preparation.jpg',
-    ],
-    ['astral-gift-box', 'Astral candle gift set', '/images/editorial/candle-pouring.jpg'],
-  ].map(([slug, alt, fallbackSrc], index) => ({
-    alt,
-    src: imageForProduct(slug, index % 2) ?? fallbackSrc,
-  }));
-
-  useEffect(() => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = heroImageUrl;
-    document.head.appendChild(link);
-    return () => link.remove();
-  }, []);
-
   async function handleNewsletter(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNewsletterStatus(null);
@@ -228,98 +214,7 @@ export function HomePage() {
     <div className="overflow-hidden">
       <BrandLoadingScreen />
 
-      <section
-        ref={heroRef}
-        className="relative h-[92svh] min-h-[560px] max-h-[860px] overflow-hidden bg-astraya-navy text-white"
-      >
-        <motion.div
-          className="absolute -inset-y-14 inset-x-0"
-          style={prefersReducedMotion ? undefined : { y: heroImageY }}
-        >
-          <SmartImage
-            alt="Candle maker pouring warm wax into glass vessels"
-            className="h-full w-full object-cover object-[58%_center]"
-            loading="eager"
-            src={heroImageUrl}
-          />
-        </motion.div>
-        <div className="absolute inset-0 bg-[#071a32]/74" />
-        <div className="absolute inset-y-0 left-0 w-2/3 bg-[#071a32]/32" />
-
-        <CandlePourScene />
-
-        <motion.div
-          className="container relative flex h-full items-center pb-20 pt-28"
-          style={
-            prefersReducedMotion
-              ? undefined
-              : {
-                  y: heroContentY,
-                  opacity: heroContentOpacity,
-                }
-          }
-        >
-          <motion.div
-            className="max-w-3xl"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 26 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={{ delay: 1.05, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="mb-6 flex items-center gap-3">
-              <span className="h-px w-12 bg-astraya-gold" aria-hidden="true" />
-              <p className="font-button text-xs font-semibold uppercase text-astraya-gold">
-                Hand-poured soy candles
-              </p>
-            </div>
-            <h1 className="font-display text-5xl font-semibold leading-[1.02] sm:text-6xl md:text-8xl lg:text-[6.5rem]">
-              Astraya
-            </h1>
-            <p className="mt-5 max-w-xl font-serif text-2xl leading-8 text-white md:text-3xl md:leading-10">
-              Light, poured into ritual.
-            </p>
-            <p className="mt-5 max-w-xl text-base leading-7 text-white/75 md:text-lg md:leading-8">
-              Soy-led candles shaped in small batches for slow evenings, thoughtful
-              gifting, and rooms that deserve a softer kind of glow.
-            </p>
-            <motion.div
-              className="mt-8 flex flex-col gap-3 sm:flex-row"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-              animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ delay: 1.45, duration: 0.7, ease: 'easeOut' }}
-            >
-              <Button asChild variant="gold">
-                <Link to="/shop">
-                  Shop the collection
-                  <ArrowRight size={18} aria-hidden="true" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                className="border-white/55 bg-transparent text-white hover:border-white hover:bg-white hover:text-astraya-navy"
-                variant="outline"
-              >
-                <Link to="/about">Our studio story</Link>
-              </Button>
-            </motion.div>
-          </motion.div>
-        </motion.div>
-
-        <motion.a
-          className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 font-button text-xs text-white/70"
-          href="#the-pour"
-          initial={prefersReducedMotion ? false : { opacity: 0 }}
-          animate={prefersReducedMotion ? undefined : { opacity: 1 }}
-          transition={{ delay: 2, duration: 0.7 }}
-        >
-          Discover the pour
-          <motion.span
-            animate={prefersReducedMotion ? undefined : { y: [0, 5, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <ArrowDown size={17} aria-hidden="true" />
-          </motion.span>
-        </motion.a>
-      </section>
+      <CandleHero />
 
       <section className="border-b border-astraya-border bg-astraya-cream">
         <div className="container grid sm:grid-cols-3">
@@ -520,14 +415,22 @@ export function HomePage() {
 
       <section className="relative min-h-[520px] overflow-hidden bg-astraya-navy text-white">
         <div className="absolute inset-0">
-          <SmartImage
-            alt=""
-            aria-hidden="true"
-            className="object-cover object-center"
-            src="/images/editorial/wick-setting.jpg"
-          />
+          <picture>
+            <source
+              srcSet="/assets/astraya/instagram/03-heart-candles.avif"
+              type="image/avif"
+            />
+            <img
+              alt=""
+              aria-hidden="true"
+              className="h-full w-full object-cover object-center"
+              decoding="async"
+              loading="lazy"
+              src="/assets/astraya/instagram/03-heart-candles.jpg"
+            />
+          </picture>
         </div>
-        <div className="absolute inset-0 bg-[#071a32]/76" />
+        <div className="absolute inset-0 bg-[#071a32]/82" />
         <div className="container relative flex min-h-[520px] items-center justify-center py-20 text-center">
           <Reveal className="max-w-3xl">
             <Flame className="mx-auto text-astraya-gold" size={30} aria-hidden="true" />
@@ -541,6 +444,24 @@ export function HomePage() {
               Astraya brings Indian gifting warmth together with clean wax, polished
               fragrance, and candlelight that feels at home in modern spaces.
             </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Button asChild variant="gold">
+                <Link to="/shop">
+                  Shop candles
+                  <ArrowRight size={17} aria-hidden="true" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                className="border-white/45 bg-white/10 text-white backdrop-blur-md hover:bg-white hover:text-astraya-navy"
+                variant="outline"
+              >
+                <a href={ASTRAYA_WHATSAPP_URL} target="_blank" rel="noreferrer">
+                  Order on WhatsApp
+                  <MessageCircle size={17} aria-hidden="true" />
+                </a>
+              </Button>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -603,21 +524,30 @@ export function HomePage() {
               </Button>
             </div>
           </Reveal>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            {shelfImages.map((image, index) => (
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+            {instagramGallery.map((image, index) => (
               <Reveal key={image.alt} delay={index * 0.05}>
                 <a
-                  className="group relative block aspect-square overflow-hidden rounded-lg"
-                  href={ASTRAYA_INSTAGRAM_URL}
+                  className="group relative block aspect-square overflow-hidden rounded-lg bg-astraya-cream"
+                  href={image.postUrl}
                   target="_blank"
                   rel="noreferrer"
                   aria-label={`View ${ASTRAYA_INSTAGRAM_HANDLE} on Instagram`}
                 >
-                  <SmartImage
-                    alt={image.alt}
-                    className="object-cover transition duration-700 group-hover:scale-105"
-                    src={image.src}
-                  />
+                  <picture>
+                    <source
+                      srcSet={`/assets/astraya/instagram/${image.baseName}.avif`}
+                      type="image/avif"
+                    />
+                    <img
+                      alt={image.alt}
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      decoding="async"
+                      loading="lazy"
+                      sizes="(min-width: 768px) 33vw, 50vw"
+                      src={`/assets/astraya/instagram/${image.baseName}.jpg`}
+                    />
+                  </picture>
                   <span className="absolute inset-0 grid place-items-center bg-astraya-navy/0 text-white opacity-0 transition duration-300 group-hover:bg-astraya-navy/45 group-hover:opacity-100">
                     <Instagram size={24} aria-hidden="true" />
                   </span>

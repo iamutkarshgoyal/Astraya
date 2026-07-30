@@ -99,4 +99,6 @@ Astraya placeholder image instead of crashing.
 ## Source Provenance
 
 Keep the source page and license record for every third-party image. The current
-catalog provenance is documented in `docs/IMAGE_CREDITS.md`.
+catalog provenance and Astraya Instagram-to-product mapping are documented in
+`docs/IMAGE_CREDITS.md`. Exact SKU replacements should retain the current
+folder names so no product database migration is required.

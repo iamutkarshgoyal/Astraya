@@ -18,7 +18,10 @@ class Settings(BaseSettings):
     postgres_port: int = 5432
     postgres_db: str = "postgres"
     database_url: str = ""
-    backend_cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    backend_cors_origins: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "https://astrayacandles.com,https://www.astrayacandles.com"
+    )
     secret_key: str = "change-this-before-production"
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 14

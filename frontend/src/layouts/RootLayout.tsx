@@ -3,6 +3,7 @@ import { Outlet, ScrollRestoration, useLocation } from 'react-router';
 
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteFooter } from '@/components/layout/SiteFooter';
+import { SeoMetadata } from '@/components/layout/SeoMetadata';
 import { cn } from '@/utils/cn';
 
 export function RootLayout() {
@@ -11,6 +12,7 @@ export function RootLayout() {
 
   return (
     <div className="flex min-h-screen flex-col bg-astraya-ivory text-astraya-text">
+      <SeoMetadata />
       <SiteHeader />
       <AnimatePresence mode="wait">
         <motion.main

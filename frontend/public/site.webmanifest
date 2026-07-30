@@ -1,0 +1,18 @@
+{
+  "name": "Astraya Candles",
+  "short_name": "Astraya",
+  "description": "Hand-poured soy candles inspired by the cosmos.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf7f1",
+  "theme_color": "#08172f",
+  "icons": [
+    {
+      "src": "/assets/astraya/logo/astraya-logo.jpg",
+      "sizes": "320x320",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

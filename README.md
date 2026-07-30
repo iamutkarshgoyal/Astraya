@@ -13,7 +13,7 @@ Milestones 1 through 20 are complete.
 
 **Frontend:** React 19, Vite, TypeScript, TailwindCSS, Framer Motion,
 React Router with DOM APIs, Axios, React Hook Form, Zod, ShadCN-style UI,
-Lucide React, Vitest
+Lucide React, Three.js, React Three Fiber, Drei, GSAP, Lenis, Vitest
 
 **Backend:** Python 3.12, FastAPI, SQLAlchemy 2, Pydantic, Alembic,
 PostgreSQL, JWT Authentication, Google OAuth, Passlib, Bcrypt, Python Dotenv,
@@ -40,6 +40,7 @@ CORS Middleware, Pytest
 
 ## Public Contact
 
+- Website: `https://astrayacandles.com`
 - Email: `astraya.candles@gmail.com`
 - WhatsApp: `https://wa.me/918958383707`
 - Instagram: `https://www.instagram.com/astrayacandles`
@@ -235,15 +236,19 @@ service, provide these secret values:
 ```bash
 DATABASE_URL=<Neon pooled Postgres URL>
 ADMIN_PASSWORD=<strong admin password>
-BACKEND_CORS_ORIGINS=https://your-netlify-site.netlify.app
+BACKEND_CORS_ORIGINS=https://astrayacandles.com,https://www.astrayacandles.com
 ```
 
 After Render deploys the backend, set this in Netlify and redeploy the
 frontend:
 
 ```bash
-VITE_API_BASE_URL=https://your-render-backend.onrender.com
+VITE_API_BASE_URL=/api
 ```
+
+The Netlify proxy in `netlify.toml` forwards `/api/*` to the Render service.
+Set `astrayacandles.com` as the primary Netlify domain and redirect
+`www.astrayacandles.com` to the apex domain.
 
 See `DEPLOYMENT.md` for environment variables and verification commands.
 

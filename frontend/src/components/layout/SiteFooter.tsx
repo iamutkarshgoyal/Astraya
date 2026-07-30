@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from 'react';
-import { Instagram, Mail, MapPin, MessageCircle, Send, Sparkles } from 'lucide-react';
+import { Globe2, Instagram, Mail, MapPin, MessageCircle, Send, Sparkles } from 'lucide-react';
 import { Link } from 'react-router';
 
 import { BrandMark } from '@/components/brand/BrandMark';
@@ -11,6 +11,8 @@ import {
   ASTRAYA_EMAIL,
   ASTRAYA_INSTAGRAM_HANDLE,
   ASTRAYA_INSTAGRAM_URL,
+  ASTRAYA_SITE_HOST,
+  ASTRAYA_SITE_URL,
   ASTRAYA_WHATSAPP_URL,
 } from '@/utils/brand';
 import { getErrorMessage } from '@/utils/errors';
@@ -89,6 +91,15 @@ export function SiteFooter() {
         <div>
           <h2 className="mb-4 font-serif text-xl text-astraya-gold">Contact</h2>
           <ul className="grid gap-3 text-sm text-white/72">
+            <li>
+              <a
+                className="flex items-center gap-3 transition-colors hover:text-astraya-gold"
+                href={ASTRAYA_SITE_URL}
+              >
+                <Globe2 size={17} aria-hidden="true" />
+                {ASTRAYA_SITE_HOST}
+              </a>
+            </li>
             <li>
               <a
                 className="flex items-center gap-3 transition-colors hover:text-astraya-gold"

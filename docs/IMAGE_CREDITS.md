@@ -1,29 +1,51 @@
 # Image Credits
 
-Astraya's current product and studio photographs are licensed stock images from
-[Pexels](https://www.pexels.com/license/). Pexels permits use in websites and
-e-commerce shops and does not require attribution. Credits are retained here for
-provenance and future asset maintenance.
+## Astraya Brand Images
 
-These photographs are representative styling imagery. Replace them with
-brand-owned product photography when final production candles are available so
-customers can inspect the exact item they will receive.
+The logo and six clean product photographs were downloaded from Astraya's
+public brand account, [@astrayacandles](https://www.instagram.com/astrayacandles/).
+They do not include Instagram navigation, comments, likes, usernames, or other
+application interface elements.
+
+The singular URL requested in the project brief, `@astrayacandle`, did not
+resolve to a public profile when these assets were collected. The live brand
+account uses the plural handle.
+
+| Local brand asset | Public source |
+| --- | --- |
+| `frontend/public/assets/astraya/logo/astraya-logo.jpg` | [Astraya profile](https://www.instagram.com/astrayacandles/) |
+| `01-daisy-pastel.{avif,jpg}` | [Pastel daisy candles](https://www.instagram.com/p/DbTTrbJyGDc/) |
+| `02-star-candles.{avif,jpg}` | [Star candles](https://www.instagram.com/p/DbONuJOylA9/) |
+| `03-heart-candles.{avif,jpg}` | [Heart jar candles](https://www.instagram.com/p/DbGiS20y5Wo/) |
+| `04-daisy-closeup.{avif,jpg}` | [Daisy candle favours](https://www.instagram.com/p/DbBcQVOSnPg/) |
+| `05-tealights.{avif,jpg}` | [Heart tealights](https://www.instagram.com/p/Da-1wlkyv8R/) |
+| `06-cosmos-candle.{avif,jpg}` | [Floral tealight gift](https://www.instagram.com/p/Da-xsBnS9p7/) |
+
+The existing product CDN filenames were retained so the API and database
+contract did not change. The current source mapping is:
+
+| Product folder | Image 1 | Image 2 |
+| --- | --- | --- |
+| `lunar-bloom-soy-candle` | `01-daisy-pastel` | `04-daisy-closeup` |
+| `celestial-oud-jar-candle` | `03-heart-candles` | `06-cosmos-candle` |
+| `solstice-spice-candle` | `02-star-candles` | `01-daisy-pastel` |
+| `eternal-vow-candle-pair` | `03-heart-candles` | `05-tealights` |
+| `astral-gift-box` | `06-cosmos-candle` | `02-star-candles` |
+| `quiet-nebula-aromatherapy-candle` | `06-cosmos-candle` | `04-daisy-closeup` |
+
+These are authentic Astraya collection images, but some do not show the exact
+seeded SKU named by the demo catalog. Replace each product folder with matching
+front, detail, and scale photographs before selling that exact SKU.
+
+## Editorial Images
+
+The candle-making editorial photographs remain licensed stock from
+[Pexels](https://www.pexels.com/license/). They are process imagery, not product
+representations.
 
 | Astraya asset | Photographer | Source |
 | --- | --- | --- |
-| `lunar-bloom-soy-candle/1.jpg` | Vlada Karpovich | [Pexels photo 6755757](https://www.pexels.com/photo/close-up-photo-of-candle-on-glass-6755757/) |
-| `lunar-bloom-soy-candle/2.jpg` | Vlada Karpovich | [Pexels photo 6755742](https://www.pexels.com/photo/6755742/) |
-| `celestial-oud-jar-candle/1.jpg` | Alesia Kozik | [Pexels photo 7797457](https://www.pexels.com/photo/close-up-photo-of-candle-in-a-jar-7797457/) |
-| `celestial-oud-jar-candle/2.jpg` | Biferyal | [Pexels photo 7649760](https://www.pexels.com/photo/candles-on-glass-containers-with-lids-7649760/) |
-| `solstice-spice-candle/1.jpg` | Vlada Karpovich | [Pexels photo 6755746](https://www.pexels.com/photo/6755746/) |
-| `solstice-spice-candle/2.jpg` | Vlada Karpovich | [Pexels photo 6755751](https://www.pexels.com/photo/6755751/) |
-| `eternal-vow-candle-pair/1.jpg` | Alexey Demidov | [Pexels photo 11065761](https://www.pexels.com/photo/11065761/) |
-| `eternal-vow-candle-pair/2.jpg` | Busra Ince | [Pexels photo 14893588](https://www.pexels.com/photo/photo-of-burning-candles-14893588/) |
-| `astral-gift-box/1.jpg` | Vie Studio | [Pexels photo 7004676](https://www.pexels.com/photo/candles-in-glass-containers-7004676/) |
-| `astral-gift-box/2.jpg` | Maahid Photos | [Pexels photo 6831672](https://www.pexels.com/photo/box-with-scented-candles-on-fabric-6831672/) |
-| `quiet-nebula-aromatherapy-candle/1.jpg` | Vlada Karpovich | [Pexels photo 6755743](https://www.pexels.com/photo/6755743/) |
-| `quiet-nebula-aromatherapy-candle/2.jpg` | Vlada Karpovich | [Pexels photo 6755756](https://www.pexels.com/photo/6755756/) |
-| `editorial/candle-pouring.jpg` | Ron Lach | [Pexels photo 8272376](https://www.pexels.com/photo/a-person-transferring-candle-wax-on-an-empty-glass-bottle-8272376/) |
-| `editorial/soy-wax-preparation.jpg` | Yan Krukau | [Pexels photo 7234419](https://www.pexels.com/photo/tools-for-candles-making-7234419/) |
-| `editorial/wick-setting.jpg` | ROMAN ODINTSOV | [Pexels photo 5933686](https://www.pexels.com/photo/close-up-of-candle-making-process-5933686/) |
-| `editorial/botanical-finishing.jpg` | Yan Krukau | [Pexels photo 7233961](https://www.pexels.com/photo/dried-flowers-and-leaves-for-decorating-candles-7233961/) |
+| `editorial/candle-pouring.jpg` | Ron Lach | [Pexels photo 8272376](https://www.pexels.com/photo/8272376/) |
+| `editorial/soy-wax-preparation.jpg` | Yan Krukau | [Pexels photo 7234419](https://www.pexels.com/photo/7234419/) |
+| `editorial/wick-setting.jpg` | ROMAN ODINTSOV | [Pexels photo 5933686](https://www.pexels.com/photo/5933686/) |
+| `editorial/botanical-finishing.jpg` | Yan Krukau | [Pexels photo 7233961](https://www.pexels.com/photo/7233961/) |

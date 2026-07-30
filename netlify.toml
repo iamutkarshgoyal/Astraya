@@ -8,6 +8,12 @@
   VITE_API_BASE_URL = "/api"
 
 [[redirects]]
+  from = "https://www.astrayacandles.com/*"
+  to = "https://astrayacandles.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/api/*"
   to = "https://astraya-backend-ivtv.onrender.com/:splat"
   status = 200

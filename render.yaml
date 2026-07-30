@@ -22,7 +22,7 @@ services:
       - key: EXPOSE_PASSWORD_RESET_TOKEN
         value: "false"
       - key: BACKEND_CORS_ORIGINS
-        sync: false
+        value: https://astrayacandles.com,https://www.astrayacandles.com
       - key: ADMIN_EMAIL
         value: admin@astraya.in
       - key: OWNER_WHATSAPP_PHONE
