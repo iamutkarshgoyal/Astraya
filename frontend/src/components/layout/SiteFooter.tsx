@@ -7,7 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { engagementService } from '@/services/engagement-service';
 import type { NavigationItem } from '@/types/navigation';
-import { ASTRAYA_EMAIL, ASTRAYA_INSTAGRAM_URL, ASTRAYA_WHATSAPP_URL } from '@/utils/brand';
+import {
+  ASTRAYA_EMAIL,
+  ASTRAYA_INSTAGRAM_HANDLE,
+  ASTRAYA_INSTAGRAM_URL,
+  ASTRAYA_WHATSAPP_URL,
+} from '@/utils/brand';
 import { getErrorMessage } from '@/utils/errors';
 
 const shopLinks: NavigationItem[] = [
@@ -112,7 +117,7 @@ export function SiteFooter() {
                 rel="noreferrer"
               >
                 <Instagram size={17} aria-hidden="true" />
-                Instagram
+                {ASTRAYA_INSTAGRAM_HANDLE}
               </a>
             </li>
             <li className="flex items-start gap-3">

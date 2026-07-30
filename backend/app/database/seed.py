@@ -184,6 +184,35 @@ REVIEW_COPY = [
 ]
 
 
+def sync_seed_product_images(product: Product, product_name: str, product_slug: str) -> None:
+    images = sorted(product.images, key=lambda image: image.display_order)
+    image_specs = [
+        {
+            "image_url": f"{product_slug}/1.jpg",
+            "alt_text": f"{product_name} product image",
+            "display_order": 0,
+            "is_primary": True,
+        },
+        {
+            "image_url": f"{product_slug}/2.jpg",
+            "alt_text": f"{product_name} detail image",
+            "display_order": 1,
+            "is_primary": False,
+        },
+    ]
+
+    for image in images:
+        image.is_primary = False
+
+    for index, image_spec in enumerate(image_specs):
+        if index < len(images):
+            image = images[index]
+            for field, value in image_spec.items():
+                setattr(image, field, value)
+        else:
+            product.images.append(ProductImage(**image_spec))
+
+
 def seed_admin(db: Session) -> User:
     admin = db.scalar(select(User).where(User.email == settings.admin_email.lower()))
     if admin:
@@ -221,23 +250,19 @@ def seed_products(db: Session, categories: dict[str, Category], admin: User) -> 
         category_slug = str(product_data.pop("category_slug"))
         product = db.scalar(select(Product).where(Product.slug == product_data["slug"]))
         if product:
+            sync_seed_product_images(
+                product,
+                str(product_data["name"]),
+                str(product_data["slug"]),
+            )
             continue
 
         product = Product(category_id=categories[category_slug].id, **product_data)
-        product.images = [
-            ProductImage(
-                image_url=f"{product_data['slug']}/1.jpg",
-                alt_text=f"{product_data['name']} product image",
-                display_order=0,
-                is_primary=True,
-            ),
-            ProductImage(
-                image_url=f"{product_data['slug']}/2.jpg",
-                alt_text=f"{product_data['name']} detail image",
-                display_order=1,
-                is_primary=False,
-            ),
-        ]
+        sync_seed_product_images(
+            product,
+            str(product_data["name"]),
+            str(product_data["slug"]),
+        )
         db.add(product)
         db.flush()
 

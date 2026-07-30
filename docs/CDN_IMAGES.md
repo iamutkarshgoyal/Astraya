@@ -95,3 +95,8 @@ old file, use one of these approaches:
 
 If a CDN image is missing or fails to load, the frontend displays the local
 Astraya placeholder image instead of crashing.
+
+## Source Provenance
+
+Keep the source page and license record for every third-party image. The current
+catalog provenance is documented in `docs/IMAGE_CREDITS.md`.

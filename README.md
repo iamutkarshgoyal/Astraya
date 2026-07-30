@@ -42,6 +42,7 @@ CORS Middleware, Pytest
 
 - Email: `astraya.candles@gmail.com`
 - WhatsApp: `https://wa.me/918958383707`
+- Instagram: `https://www.instagram.com/astrayacandles`
 - The frontend contact form validates locally and opens WhatsApp with an
   encoded message instead of submitting to the backend contact endpoint.
 

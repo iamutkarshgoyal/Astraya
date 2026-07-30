@@ -23,7 +23,7 @@ function navLinkClass(isOverHero: boolean) {
   return ({ isActive }: { isActive: boolean }) =>
     cn(
       'group relative font-button text-[0.78rem] font-semibold uppercase tracking-[0.16em] transition-colors after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-astraya-gold after:transition-transform hover:after:scale-x-100',
-      isOverHero ? 'text-white/86 hover:text-astraya-gold' : 'text-astraya-navy/78 hover:text-astraya-darkGold',
+      isOverHero ? 'text-white/80 hover:text-astraya-gold' : 'text-astraya-navy/80 hover:text-astraya-darkGold',
       isActive && 'text-astraya-gold after:scale-x-100',
     );
 }

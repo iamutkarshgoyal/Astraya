@@ -19,6 +19,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const wished = isWishlisted(product.id);
   const saving = savingPercent(product);
   const imageUrl = product.primary_image_url ?? product.images[0]?.image_url;
+  const secondaryImageUrl = product.images.find((image) => image.image_url !== imageUrl)?.image_url;
 
   return (
     <article className="group overflow-hidden rounded-lg border border-astraya-border bg-astraya-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-astraya-gold/70 hover:shadow-card">
@@ -26,9 +27,18 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="relative aspect-[4/3] overflow-hidden bg-astraya-cream">
           <SmartImage
             alt={product.name}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition duration-700 group-hover:scale-105 group-hover:opacity-0"
             src={imageUrl}
           />
+          {secondaryImageUrl && (
+            <SmartImage
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full scale-105 object-cover opacity-0 transition duration-700 group-hover:scale-100 group-hover:opacity-100"
+              src={secondaryImageUrl}
+            />
+          )}
+          <div className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-astraya-gold transition-transform duration-500 group-hover:scale-x-100" />
           <div className="absolute left-3 top-3 flex flex-wrap gap-2">
             {product.is_best_seller && (
               <span className="rounded-sm bg-astraya-navy px-2 py-1 font-button text-[0.62rem] font-bold uppercase tracking-[0.12em] text-white">

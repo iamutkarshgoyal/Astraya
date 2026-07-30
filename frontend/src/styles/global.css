@@ -26,7 +26,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  background: linear-gradient(180deg, #faf6ef 0%, #fffdf9 44%, #f7f2e9 100%);
+  background: #faf6ef;
 }
 
 button,
@@ -65,5 +65,191 @@ a {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+.candle-pour-scene {
+  position: absolute;
+  right: max(2rem, 5vw);
+  bottom: 1.5rem;
+  z-index: 1;
+  width: 360px;
+  height: 430px;
+  pointer-events: none;
+  filter: drop-shadow(0 28px 38px rgb(0 0 0 / 24%));
+}
+
+.candle-pour-scene__pitcher {
+  position: absolute;
+  top: 34px;
+  right: 30px;
+  width: 142px;
+  height: 96px;
+  border: 2px solid rgb(255 255 255 / 58%);
+  border-radius: 34px 26px 24px 34px;
+  background: rgb(239 226 189 / 12%);
+  transform-origin: 88% 48%;
+  backdrop-filter: blur(3px);
+}
+
+.candle-pour-scene__spout {
+  position: absolute;
+  left: -54px;
+  bottom: 10px;
+  width: 64px;
+  height: 32px;
+  border: 2px solid rgb(255 255 255 / 58%);
+  border-right: 0;
+  background: rgb(239 226 189 / 12%);
+  clip-path: polygon(0 72%, 100% 0, 100% 100%);
+}
+
+.candle-pour-scene__handle {
+  position: absolute;
+  top: 20px;
+  right: -38px;
+  width: 52px;
+  height: 56px;
+  border: 2px solid rgb(255 255 255 / 48%);
+  border-left: 0;
+  border-radius: 0 28px 28px 0;
+}
+
+.candle-pour-scene__shine {
+  position: absolute;
+  top: 17px;
+  left: 26px;
+  width: 50px;
+  height: 2px;
+  background: rgb(255 255 255 / 48%);
+}
+
+.candle-pour-scene__stream {
+  position: absolute;
+  top: 119px;
+  right: 181px;
+  width: 7px;
+  height: 150px;
+  border-radius: 999px;
+  background: #efdca8;
+  box-shadow: 0 0 16px rgb(239 220 168 / 48%);
+  transform-origin: top;
+}
+
+.candle-pour-scene__jar {
+  position: absolute;
+  right: 101px;
+  bottom: 18px;
+  width: 158px;
+  height: 188px;
+  overflow: visible;
+  border: 2px solid rgb(255 255 255 / 62%);
+  border-top-color: rgb(255 255 255 / 78%);
+  border-radius: 12px 12px 42px 42px;
+  background: rgb(255 255 255 / 8%);
+  box-shadow:
+    inset 14px 0 20px rgb(255 255 255 / 6%),
+    inset -14px 0 20px rgb(7 26 50 / 18%);
+  backdrop-filter: blur(3px);
+}
+
+.candle-pour-scene__wax {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  left: 7px;
+  overflow: hidden;
+  border-radius: 7px 7px 34px 34px;
+  background: #eadbb6;
+  box-shadow: inset 0 12px 18px rgb(255 255 255 / 28%);
+}
+
+.candle-pour-scene__wax::before {
+  position: absolute;
+  top: -5px;
+  right: 0;
+  left: 0;
+  height: 12px;
+  border-radius: 50%;
+  background: #f8edcf;
+  content: "";
+}
+
+.candle-pour-scene__wick {
+  position: absolute;
+  z-index: 2;
+  top: 30px;
+  left: calc(50% - 1px);
+  width: 2px;
+  height: 74px;
+  border-radius: 999px;
+  background: #473426;
+}
+
+.candle-pour-scene__flame-wrap {
+  position: absolute;
+  z-index: 3;
+  top: -11px;
+  left: calc(50% - 13px);
+  width: 26px;
+  height: 42px;
+  filter: drop-shadow(0 0 16px rgb(245 177 67 / 82%));
+}
+
+.candle-pour-scene__flame {
+  display: block;
+  width: 26px;
+  height: 38px;
+  border-radius: 58% 42% 58% 42%;
+  background: linear-gradient(135deg, #fff4bf 12%, #efb548 58%, #d66f32 100%);
+  transform: rotate(45deg);
+  animation: astraya-flame 1.5s ease-in-out infinite alternate;
+}
+
+.candle-pour-scene__label {
+  position: absolute;
+  z-index: 3;
+  right: 24px;
+  bottom: 38px;
+  left: 24px;
+  display: grid;
+  height: 46px;
+  place-items: center;
+  border: 1px solid rgb(13 33 71 / 24%);
+  border-radius: 4px;
+  background: rgb(255 253 249 / 72%);
+  color: #0d2147;
+  font-family: Cinzel, Georgia, serif;
+  font-size: 1.15rem;
+}
+
+@keyframes astraya-flame {
+  0% {
+    border-radius: 62% 38% 54% 46%;
+    transform: rotate(43deg) scale(0.94, 1.04);
+  }
+
+  100% {
+    border-radius: 48% 52% 64% 36%;
+    transform: rotate(47deg) scale(1.04, 0.96);
+  }
+}
+
+@media (max-width: 1023px) {
+  .candle-pour-scene {
+    right: -78px;
+    bottom: 4px;
+    opacity: 0.42;
+    transform: scale(0.76);
+    transform-origin: right bottom;
+  }
+}
+
+@media (max-width: 639px) {
+  .candle-pour-scene {
+    right: 8px;
+    bottom: -12px;
+    opacity: 0.28;
+    transform: scale(0.55);
   }
 }
