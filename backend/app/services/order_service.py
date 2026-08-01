@@ -1,3 +1,4 @@
+from collections import defaultdict
 from decimal import Decimal
 from urllib.parse import quote
 
@@ -21,8 +22,15 @@ def build_whatsapp_message(order: Order) -> str:
     lines = [
         "Astraya Order",
         f"Order Number: {order.order_number}",
+        (
+            f"Order Date: {order.created_at.strftime('%d %b %Y, %I:%M %p UTC')}"
+            if order.created_at
+            else "Order Date: Just placed"
+        ),
         f"Customer Name: {order.customer_name}",
         f"Phone: {order.phone}",
+        f"Email: {order.email}",
+        f"Address: {order.address}, {order.city}, {order.state} - {order.pincode}",
         "",
         "Products:",
     ]
@@ -31,6 +39,15 @@ def build_whatsapp_message(order: Order) -> str:
             f"- {item.product_name} | Qty: {item.quantity} | "
             f"Price: Rs {item.unit_price} | Subtotal: Rs {item.line_total}"
         )
+        if item.customization:
+            lines.append(
+                "  Customisation: "
+                f"{item.customization.get('wax_color_name', 'Custom')} wax, "
+                f"{item.customization.get('decoration_label', 'No')} add-on, "
+                f"{'fine glitter' if item.customization.get('glitter') else 'no glitter'}"
+            )
+        if item.preview_image:
+            lines.append("  Preview: included with owner notification")
 
     lines.extend(
         [
@@ -40,8 +57,6 @@ def build_whatsapp_message(order: Order) -> str:
             f"Tax: Rs {order.tax_amount}",
             f"Discount: Rs {order.discount_amount}",
             f"Grand Total: Rs {order.grand_total}",
-            "",
-            f"Address: {order.address}, {order.city}, {order.state} - {order.pincode}",
         ]
     )
     if order.special_instructions:
@@ -73,17 +88,25 @@ def create_order(
         missing_ids = sorted(set(product_ids) - set(products))
         raise ValueError(f"Products unavailable: {missing_ids}")
 
+    requested_quantities: dict[int, int] = defaultdict(int)
+    for item in payload.items:
+        requested_quantities[item.product_id] += item.quantity
+
+    for product_id, requested_quantity in requested_quantities.items():
+        product = products[product_id]
+        if product.stock_quantity < requested_quantity:
+            raise ValueError(
+                f"{product.name} has only {product.stock_quantity} available"
+            )
+
     order_items: list[OrderItem] = []
     subtotal = Decimal("0.00")
     for item in payload.items:
         product = products[item.product_id]
-        if product.stock_quantity < item.quantity:
-            raise ValueError(f"{product.name} has only {product.stock_quantity} available")
 
         unit_price = product.discount_price or product.price
         line_total = money(unit_price * item.quantity)
         subtotal += line_total
-        product.stock_quantity -= item.quantity
         order_items.append(
             OrderItem(
                 product_id=product.id,
@@ -91,8 +114,17 @@ def create_order(
                 quantity=item.quantity,
                 unit_price=money(unit_price),
                 line_total=line_total,
+                customization=(
+                    item.customization.model_dump()
+                    if item.customization
+                    else None
+                ),
+                preview_image=item.preview_image,
             )
         )
+
+    for product_id, requested_quantity in requested_quantities.items():
+        products[product_id].stock_quantity -= requested_quantity
 
     totals = calculate_totals(subtotal, payload.coupon_code)
     order = Order(

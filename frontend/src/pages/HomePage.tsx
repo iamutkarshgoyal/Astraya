@@ -277,8 +277,8 @@ export function HomePage() {
             </div>
           </Reveal>
 
-          <div className="grid gap-3 sm:grid-cols-[1.08fr_0.92fr]">
-            <Reveal className="sm:row-span-2">
+          <div className="grid gap-3 sm:grid-cols-[1.08fr_0.92fr] sm:grid-rows-2">
+            <Reveal className="h-full sm:row-span-2">
               <div className="relative min-h-[360px] overflow-hidden rounded-lg sm:h-full sm:min-h-[520px]">
                 <SmartImage
                   alt="Soy wax being prepared in a candle studio"
@@ -287,8 +287,8 @@ export function HomePage() {
                 />
               </div>
             </Reveal>
-            <Reveal delay={0.1}>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+            <Reveal className="h-full" delay={0.1}>
+              <div className="relative aspect-[4/3] overflow-hidden rounded-lg sm:h-full sm:min-h-0 sm:aspect-auto">
                 <SmartImage
                   alt="Candle wicks being centered after pouring"
                   className="object-cover"
@@ -296,8 +296,8 @@ export function HomePage() {
                 />
               </div>
             </Reveal>
-            <Reveal delay={0.16}>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+            <Reveal className="h-full" delay={0.16}>
+              <div className="relative aspect-[4/3] overflow-hidden rounded-lg sm:h-full sm:min-h-0 sm:aspect-auto">
                 <SmartImage
                   alt="Botanical candle finishing at the studio table"
                   className="object-cover"
@@ -335,7 +335,7 @@ export function HomePage() {
               <CatalogCardSkeleton count={4} />
             ) : (
               data.featuredProducts.map((product, index) => (
-                <Reveal key={product.id} delay={index * 0.06}>
+                <Reveal key={product.id} className="h-full" delay={index * 0.06}>
                   <ProductCard product={product} />
                 </Reveal>
               ))
@@ -369,7 +369,7 @@ export function HomePage() {
               <CatalogCardSkeleton count={3} />
             ) : (
               data.bestSellers.map((product, index) => (
-                <Reveal key={product.id} delay={index * 0.06}>
+                <Reveal key={product.id} className="h-full" delay={index * 0.06}>
                   <ProductCard product={product} />
                 </Reveal>
               ))
@@ -404,7 +404,7 @@ export function HomePage() {
               <CatalogCardSkeleton count={4} variant="category" />
             ) : (
               data.categories.map((category, index) => (
-                <Reveal key={category.id} delay={index * 0.06}>
+                <Reveal key={category.id} className="h-full" delay={index * 0.06}>
                   <CategoryCard category={category} />
                 </Reveal>
               ))
@@ -413,7 +413,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="relative min-h-[520px] overflow-hidden bg-astraya-navy text-white">
+      <section className="relative min-h-[520px] overflow-hidden bg-[#15251d] text-white">
         <div className="absolute inset-0">
           <picture>
             <source
@@ -430,14 +430,14 @@ export function HomePage() {
             />
           </picture>
         </div>
-        <div className="absolute inset-0 bg-[#071a32]/82" />
+        <div className="absolute inset-0 bg-[#101d17]/88" />
         <div className="container relative flex min-h-[520px] items-center justify-center py-20 text-center">
           <Reveal className="max-w-3xl">
             <Flame className="mx-auto text-astraya-gold" size={30} aria-hidden="true" />
             <p className="mt-5 font-button text-xs font-semibold uppercase text-astraya-gold">
               A quieter kind of luxury
             </p>
-            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight md:text-6xl">
+            <h2 className="mt-4 font-serif text-4xl leading-tight md:text-6xl">
               Made to change the feeling of a room.
             </h2>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-white/72">
@@ -453,7 +453,7 @@ export function HomePage() {
               </Button>
               <Button
                 asChild
-                className="border-white/45 bg-white/10 text-white backdrop-blur-md hover:bg-white hover:text-astraya-navy"
+                className="border-white bg-white text-astraya-navy shadow-sm hover:border-astraya-gold hover:bg-astraya-gold hover:text-astraya-ink"
                 variant="outline"
               >
                 <a href={ASTRAYA_WHATSAPP_URL} target="_blank" rel="noreferrer">

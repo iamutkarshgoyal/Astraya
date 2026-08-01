@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { type PropsWithChildren, useEffect, useMemo, useRef } from 'react';
 import {
   ContactShadows,
+  Environment,
   Float,
+  Lightformer,
   PresentationControls,
   Sparkles,
 } from '@react-three/drei';
@@ -17,12 +19,17 @@ import {
   MathUtils,
   PCFShadowMap,
   SRGBColorSpace,
+  type Group,
   Vector3,
 } from 'three';
 
 import { CandleModel } from '@/components/three/CandleModel';
 import { SceneLighting } from '@/components/three/SceneLighting';
-import type { CandleSceneProps, FlameEnergy } from '@/components/three/types';
+import type {
+  CandleSceneProps,
+  DeviceTiltRef,
+  FlameEnergy,
+} from '@/components/three/types';
 
 function CameraMotion({
   mobile,
@@ -39,7 +46,7 @@ function CameraMotion({
           0,
           1,
         );
-    const pointerX = reducedMotion ? 0 : pointer.x * (mobile ? 0.04 : 0.12);
+    const pointerX = reducedMotion ? 0 : pointer.x * (mobile ? 0.03 : 0.08);
     const pointerY = reducedMotion ? 0 : pointer.y * 0.035;
     const targetY = (mobile ? -0.16 : 0.18) + scrollProgress * 0.52 + pointerY;
     const targetZ = (mobile ? 7.65 : 7.35) + scrollProgress * 0.75;
@@ -48,11 +55,45 @@ function CameraMotion({
     camera.position.y = MathUtils.damp(camera.position.y, targetY, 3.2, delta);
     camera.position.z = MathUtils.damp(camera.position.z, targetZ, 3.2, delta);
 
-    lookAtTarget.set(mobile ? 0.25 : 0.58, mobile ? -0.56 : 0.02, 0);
+    lookAtTarget.set(mobile ? 0.18 : 0.72, mobile ? -0.52 : 0.02, 0);
     camera.lookAt(lookAtTarget);
   });
 
   return null;
+}
+
+function DeviceTilt({
+  children,
+  reducedMotion,
+  tiltRef,
+}: PropsWithChildren<{
+  reducedMotion: boolean;
+  tiltRef: DeviceTiltRef;
+}>) {
+  const groupRef = useRef<Group>(null);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) {
+      return;
+    }
+    const tilt = tiltRef.current;
+    const targetX = reducedMotion || !tilt.active ? 0 : tilt.y * 0.2;
+    const targetY = reducedMotion || !tilt.active ? 0 : tilt.x * 0.34;
+    groupRef.current.rotation.x = MathUtils.damp(
+      groupRef.current.rotation.x,
+      targetX,
+      4,
+      delta,
+    );
+    groupRef.current.rotation.y = MathUtils.damp(
+      groupRef.current.rotation.y,
+      targetY,
+      4,
+      delta,
+    );
+  });
+
+  return <group ref={groupRef}>{children}</group>;
 }
 
 function SceneContent({
@@ -61,18 +102,20 @@ function SceneContent({
   mobile,
   onToggle,
   reducedMotion,
+  tiltRef,
+  visual,
 }: CandleSceneProps) {
   const { size } = useThree();
   const energy = useRef({ value: isLit ? 1 : 0 }) as FlameEnergy;
   const isReducedQuality = compact;
   const useReducedEffects = compact || reducedMotion;
   const shortMobileViewport = mobile && size.height < 700;
-  const candleScale = shortMobileViewport ? 0.54 : mobile ? 0.62 : 1.04;
+  const candleScale = shortMobileViewport ? 0.56 : mobile ? 0.65 : 1.1;
   const candlePosition: [number, number, number] = shortMobileViewport
-    ? [0.9, -2.8, 0]
+    ? [0.25, -2.72, 0]
     : mobile
-      ? [0.88, -2.55, 0]
-      : [2.12, -0.22, 0];
+      ? [0.28, -2.42, 0]
+      : [1.62, -0.2, 0];
   const floorY = candlePosition[1] - 1.22 * candleScale;
 
   return (
@@ -83,9 +126,34 @@ function SceneContent({
         compact={isReducedQuality}
         energy={energy}
       />
+      {!isReducedQuality && (
+        <Environment resolution={128}>
+          <Lightformer
+            color="#fff0cf"
+            intensity={2}
+            position={[0, 5, -5]}
+            rotation-x={Math.PI / 2}
+            scale={[8, 8, 1]}
+          />
+          <Lightformer
+            color="#bfd9cf"
+            intensity={1.25}
+            position={[-5, 1, 2]}
+            rotation-y={Math.PI / 2}
+            scale={[5, 8, 1]}
+          />
+          <Lightformer
+            color="#d9947d"
+            intensity={0.85}
+            position={[5, -1, 1]}
+            rotation-y={-Math.PI / 2}
+            scale={[4, 6, 1]}
+          />
+        </Environment>
+      )}
 
       <Sparkles
-        color="#d9bd80"
+        color="#dfc88d"
         count={reducedMotion ? 12 : isReducedQuality ? 18 : 74}
         noise={reducedMotion ? 0 : 0.8}
         opacity={0.34}
@@ -99,28 +167,31 @@ function SceneContent({
         cursor
         enabled={!reducedMotion}
         global={false}
-        polar={[-0.07, 0.08]}
+        polar={[-0.48, 0.48]}
         rotation={[0, 0, 0]}
-        snap
-        speed={0.38}
-        azimuth={[-0.18, 0.18]}
+        snap={false}
+        speed={0.52}
+        azimuth={[-Math.PI, Math.PI]}
       >
-        <Float
-          floatingRange={[-0.045, 0.045]}
-          floatIntensity={reducedMotion ? 0 : 0.14}
-          rotationIntensity={reducedMotion ? 0 : 0.035}
-          speed={reducedMotion ? 0 : 1.05}
-        >
-          <group position={candlePosition} scale={candleScale}>
-            <CandleModel
-              compact={isReducedQuality}
-              energy={energy}
-              isLit={isLit}
-              onToggle={onToggle}
-              reducedMotion={reducedMotion}
-            />
-          </group>
-        </Float>
+        <DeviceTilt reducedMotion={reducedMotion} tiltRef={tiltRef}>
+          <Float
+            floatingRange={[-0.045, 0.045]}
+            floatIntensity={reducedMotion ? 0 : 0.14}
+            rotationIntensity={reducedMotion ? 0 : 0.025}
+            speed={reducedMotion ? 0 : 1.05}
+          >
+            <group position={candlePosition} scale={candleScale}>
+              <CandleModel
+                compact={isReducedQuality}
+                energy={energy}
+                isLit={isLit}
+                onToggle={onToggle}
+                reducedMotion={reducedMotion}
+                visual={visual}
+              />
+            </group>
+          </Float>
+        </DeviceTilt>
       </PresentationControls>
 
       {!mobile && (
@@ -132,7 +203,7 @@ function SceneContent({
           >
             <planeGeometry args={[30, 30]} />
             <meshStandardMaterial
-              color="#07111f"
+              color="#11140f"
               metalness={isReducedQuality ? 0.08 : 0.32}
               roughness={isReducedQuality ? 0.68 : 0.4}
             />
@@ -242,7 +313,7 @@ export function CandleScene(props: CandleSceneProps) {
         gl.shadowMap.needsUpdate = true;
         gl.toneMapping = ACESFilmicToneMapping;
         gl.toneMappingExposure = 1.08;
-        gl.setClearColor(0x071326, 0);
+        gl.setClearColor(0x141710, 0);
       }}
     >
       <ContextLossGuard onContextLost={props.onContextLost} />

@@ -1,12 +1,20 @@
 import type { Product } from '@/types/catalog';
 import type { User } from '@/types/auth';
+import type { CandleCustomization } from '@/types/customization';
 
 export type CartLine = {
+  cartItemId?: number;
+  customization?: CandleCustomization | null;
+  lineId: string;
+  previewImage?: string | null;
   product: Product;
   quantity: number;
+  variantKey: string;
 };
 
 export type OrderItemCreate = {
+  customization?: CandleCustomization | null;
+  preview_image?: string | null;
   product_id: number;
   quantity: number;
 };
@@ -28,6 +36,8 @@ export type OrderItem = {
   id: number;
   product_id?: number | null;
   product_name: string;
+  customization?: CandleCustomization | null;
+  preview_image?: string | null;
   quantity: number;
   unit_price: number | string;
   line_total: number | string;
@@ -50,6 +60,9 @@ export type Order = {
   discount_amount: number | string;
   grand_total: number | string;
   status: string;
+  email_notification_status?: string;
+  whatsapp_notification_status?: string;
+  notification_error?: string | null;
   items: OrderItem[];
   created_at: string;
 };

@@ -37,6 +37,33 @@ These are authentic Astraya collection images, but some do not show the exact
 seeded SKU named by the demo catalog. Replace each product folder with matching
 front, detail, and scale photographs before selling that exact SKU.
 
+### HeartGlow Product Images
+
+The eight HeartGlow colour views came from the owner-provided local Astraya
+image library. Web-optimised copies are stored in both:
+
+- `images/products/heartglow-gel-soy-mini-jar-candle/` for the product API/CDN
+- `frontend/public/assets/astraya/products/heartglow-gel-soy-mini-jar-candle/`
+  for named local campaign assets
+
+The untouched source files remain in
+`~/Downloads/Astraya Images/Products/HeartGlow Gel–Soy Mini Jar Candle/`.
+
+## Collection Images
+
+Collection tiles use licensed Pexels photography chosen to show real gift
+packaging, candle hampers, wedding favours, and aromatherapy styling rather than
+generic candle illustrations.
+
+| Astraya asset | Public source |
+| --- | --- |
+| `categories/luxury-collection.jpg` | [Pexels photo 7233944](https://www.pexels.com/photo/7233944/) |
+| `categories/festive-collection.jpg` | [Pexels photo 33180700](https://www.pexels.com/photo/33180700/) |
+| `categories/wedding-collection.jpg` | [Pexels photo 7309481](https://www.pexels.com/photo/7309481/) |
+| `categories/gift-boxes.jpg` | [Pexels photo 37502149](https://www.pexels.com/photo/37502149/) |
+| `categories/aromatherapy.jpg` | [Pexels photo 6831676](https://www.pexels.com/photo/6831676/) |
+| `categories/signature-collection.jpg` | [Pexels photo 7309882](https://www.pexels.com/photo/7309882/) |
+
 ## Editorial Images
 
 The candle-making editorial photographs remain licensed stock from

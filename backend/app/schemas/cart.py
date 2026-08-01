@@ -3,9 +3,10 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.catalog import ProductRead
+from app.schemas.customization import CandleCustomization, CustomizableItem
 
 
-class CartItemRequest(BaseModel):
+class CartItemRequest(CustomizableItem):
     product_id: int
     quantity: int = Field(ge=1, le=99)
 
@@ -16,6 +17,9 @@ class CartItemRead(BaseModel):
     id: int
     product_id: int
     quantity: int
+    variant_key: str
+    customization: CandleCustomization | None = None
+    preview_image: str | None = None
     product: ProductRead
     created_at: datetime
     updated_at: datetime | None = None

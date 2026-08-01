@@ -11,6 +11,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { cartService, type ApiCart } from '@/services/cart-service';
 import type { CartLine } from '@/types/commerce';
 import type { Product } from '@/types/catalog';
+import type { CandleCustomization } from '@/types/customization';
+import { createCustomizationKey } from '@/utils/customization';
 import { calculateCartSubtotal } from '@/utils/money';
 
 const CART_STORAGE_KEY = 'astraya-cart';
@@ -19,9 +21,16 @@ type CartContextValue = {
   items: CartLine[];
   itemCount: number;
   subtotal: number;
-  addItem: (product: Product, quantity?: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
-  removeItem: (productId: number) => void;
+  addItem: (
+    product: Product,
+    quantity?: number,
+    options?: {
+      customization?: CandleCustomization | null;
+      previewImage?: string | null;
+    },
+  ) => void;
+  updateQuantity: (lineId: string, quantity: number) => void;
+  removeItem: (lineId: string) => void;
   clearCart: () => void;
 };
 
@@ -33,8 +42,30 @@ function readStoredCart(): CartLine[] {
     if (!raw) {
       return [];
     }
-    const parsed = JSON.parse(raw) as CartLine[];
-    return Array.isArray(parsed) ? parsed : [];
+    const parsed = JSON.parse(raw) as Partial<CartLine>[];
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    return parsed
+      .filter((line): line is Partial<CartLine> & Pick<CartLine, 'product' | 'quantity'> =>
+        Boolean(line?.product && line.quantity),
+      )
+      .map((line) => {
+        const variantKey =
+          line.variantKey ??
+          (line.customization
+            ? createCustomizationKey(line.customization)
+            : 'standard');
+        return {
+          cartItemId: line.cartItemId,
+          customization: line.customization ?? null,
+          lineId: line.lineId ?? `${line.product.id}:${variantKey}`,
+          previewImage: line.previewImage ?? null,
+          product: line.product,
+          quantity: line.quantity,
+          variantKey,
+        };
+      });
   } catch {
     return [];
   }
@@ -42,8 +73,13 @@ function readStoredCart(): CartLine[] {
 
 function linesFromApiCart(cart: ApiCart): CartLine[] {
   return cart.items.map((item) => ({
+    cartItemId: item.id,
+    customization: item.customization ?? null,
+    lineId: `cart-${item.id}`,
+    previewImage: item.preview_image ?? null,
     product: item.product,
     quantity: item.quantity,
+    variantKey: item.variant_key ?? 'standard',
   }));
 }
 
@@ -72,7 +108,12 @@ export function CartProvider({ children }: PropsWithChildren) {
       const anonymousItems = readStoredCart();
       let cart = await cartService.getCart();
       for (const item of anonymousItems) {
-        cart = await cartService.addItem(item.product.id, item.quantity);
+        cart = await cartService.addItem(
+          item.product.id,
+          item.quantity,
+          item.customization,
+          item.previewImage,
+        );
       }
       window.localStorage.removeItem(CART_STORAGE_KEY);
       if (isMounted) {
@@ -90,35 +131,65 @@ export function CartProvider({ children }: PropsWithChildren) {
     };
   }, [isAuthenticated]);
 
-  function addItem(product: Product, quantity = 1) {
+  function addItem(
+    product: Product,
+    quantity = 1,
+    options?: {
+      customization?: CandleCustomization | null;
+      previewImage?: string | null;
+    },
+  ) {
+    const customization = options?.customization ?? null;
+    const previewImage = options?.previewImage ?? null;
+    const variantKey = customization
+      ? createCustomizationKey(customization)
+      : 'standard';
+    const lineId = `${product.id}:${variantKey}`;
+
     setItems((current) => {
-      const existing = current.find((item) => item.product.id === product.id);
+      const existing = current.find(
+        (item) =>
+          item.product.id === product.id && item.variantKey === variantKey,
+      );
       if (existing) {
         return current.map((item) =>
-          item.product.id === product.id
+          item.product.id === product.id && item.variantKey === variantKey
             ? {
                 ...item,
                 quantity: Math.min(product.stock_quantity, item.quantity + quantity),
+                customization,
+                previewImage: previewImage || item.previewImage,
                 product,
               }
             : item,
         );
       }
-      return [...current, { product, quantity: Math.min(product.stock_quantity, quantity) }];
+      return [
+        ...current,
+        {
+          customization,
+          lineId,
+          previewImage,
+          product,
+          quantity: Math.min(product.stock_quantity, quantity),
+          variantKey,
+        },
+      ];
     });
     if (isAuthenticated) {
       void cartService
-        .addItem(product.id, quantity)
+        .addItem(product.id, quantity, customization, previewImage)
         .then((cart) => setItems(linesFromApiCart(cart)))
         .catch(() => undefined);
     }
   }
 
-  function updateQuantity(productId: number, quantity: number) {
+  function updateQuantity(lineId: string, quantity: number) {
+    const target = items.find((item) => item.lineId === lineId);
     setItems((current) =>
       current
         .map((item) =>
-          item.product.id === productId
+          item.lineId === lineId
             ? {
                 ...item,
                 quantity: Math.min(item.product.stock_quantity, Math.max(1, quantity)),
@@ -127,19 +198,24 @@ export function CartProvider({ children }: PropsWithChildren) {
         )
         .filter((item) => item.quantity > 0),
     );
-    if (isAuthenticated) {
+    if (isAuthenticated && target?.cartItemId) {
       void cartService
-        .updateItem(productId, Math.max(1, quantity))
+        .updateLine(
+          target.cartItemId,
+          target.product.id,
+          Math.max(1, quantity),
+        )
         .then((cart) => setItems(linesFromApiCart(cart)))
         .catch(() => undefined);
     }
   }
 
-  function removeItem(productId: number) {
-    setItems((current) => current.filter((item) => item.product.id !== productId));
-    if (isAuthenticated) {
+  function removeItem(lineId: string) {
+    const target = items.find((item) => item.lineId === lineId);
+    setItems((current) => current.filter((item) => item.lineId !== lineId));
+    if (isAuthenticated && target?.cartItemId) {
       void cartService
-        .removeItem(productId)
+        .removeLine(target.cartItemId)
         .then((cart) => setItems(linesFromApiCart(cart)))
         .catch(() => undefined);
     }

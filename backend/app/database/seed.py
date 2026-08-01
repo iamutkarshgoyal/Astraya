@@ -18,42 +18,42 @@ SEED_CATEGORIES = [
         "name": "Luxury Collection",
         "slug": "luxury-collection",
         "description": "Polished glass jars, layered fragrances, and gift-ready finishes.",
-        "image_url": "/images/categories/luxury-collection.png",
+        "image_url": "/images/categories/luxury-collection.jpg",
         "display_order": 1,
     },
     {
         "name": "Festive Collection",
         "slug": "festive-collection",
         "description": "Warm celebration scents designed for gifting and gatherings.",
-        "image_url": "/images/categories/festive-collection.png",
+        "image_url": "/images/categories/festive-collection.jpg",
         "display_order": 2,
     },
     {
         "name": "Wedding Collection",
         "slug": "wedding-collection",
         "description": "Elegant favors and ceremony candles for intimate celebrations.",
-        "image_url": "/images/categories/wedding-collection.png",
+        "image_url": "/images/categories/wedding-collection.jpg",
         "display_order": 3,
     },
     {
         "name": "Gift Boxes",
         "slug": "gift-boxes",
         "description": "Curated candle sets wrapped for effortless premium gifting.",
-        "image_url": "/images/categories/gift-boxes.png",
+        "image_url": "/images/categories/gift-boxes.jpg",
         "display_order": 4,
     },
     {
         "name": "Aromatherapy",
         "slug": "aromatherapy",
         "description": "Clean, calming blends for rituals, rest, and quiet evenings.",
-        "image_url": "/images/categories/aromatherapy.png",
+        "image_url": "/images/categories/aromatherapy.jpg",
         "display_order": 5,
     },
     {
         "name": "Signature Collection",
         "slug": "signature-collection",
         "description": "Astraya's core celestial scents for everyday luxury.",
-        "image_url": "/images/categories/signature-collection.png",
+        "image_url": "/images/categories/signature-collection.jpg",
         "display_order": 6,
     },
 ]
@@ -97,6 +97,26 @@ SEED_PRODUCTS = [
         "dimensions": "8.5 cm x 10 cm",
         "is_featured": True,
         "is_best_seller": False,
+    },
+    {
+        "category_slug": "signature-collection",
+        "name": "HeartGlow Gel-Soy Mini Jar Candle",
+        "slug": "heartglow-gel-soy-mini-jar-candle",
+        "sku": "AST-HEARTGLOW-MINI",
+        "short_description": "A playful gel-soy mini candle with hand-finished wax hearts.",
+        "description": "HeartGlow pairs a clear mini jar with creamy soy wax, jewel-toned gel details, and hand-shaped hearts. Choose the wax colour and top finish to create a small-batch candle made for gifting, tablescapes, and warm everyday moments.",
+        "price": Decimal("899.00"),
+        "discount_price": Decimal("799.00"),
+        "stock_quantity": 42,
+        "burn_time_minutes": 1320,
+        "wax_type": "Gel-soy wax blend",
+        "fragrance": "Rose nectar, lychee, soft vanilla",
+        "ingredients": "Soy wax, candle gel, cotton wick, phthalate-free fragrance oil",
+        "weight_grams": 120,
+        "dimensions": "6.5 cm x 7 cm",
+        "is_featured": True,
+        "is_best_seller": True,
+        "image_count": 8,
     },
     {
         "category_slug": "festive-collection",
@@ -184,21 +204,25 @@ REVIEW_COPY = [
 ]
 
 
-def sync_seed_product_images(product: Product, product_name: str, product_slug: str) -> None:
+def sync_seed_product_images(
+    product: Product,
+    product_name: str,
+    product_slug: str,
+    image_count: int = 2,
+) -> None:
     images = sorted(product.images, key=lambda image: image.display_order)
     image_specs = [
         {
-            "image_url": f"{product_slug}/1.jpg",
-            "alt_text": f"{product_name} product image",
-            "display_order": 0,
-            "is_primary": True,
-        },
-        {
-            "image_url": f"{product_slug}/2.jpg",
-            "alt_text": f"{product_name} detail image",
-            "display_order": 1,
-            "is_primary": False,
-        },
+            "image_url": f"{product_slug}/{image_index}.jpg",
+            "alt_text": (
+                f"{product_name} product image"
+                if image_index == 1
+                else f"{product_name} colour view {image_index}"
+            ),
+            "display_order": image_index - 1,
+            "is_primary": image_index == 1,
+        }
+        for image_index in range(1, image_count + 1)
     ]
 
     for image in images:
@@ -240,6 +264,10 @@ def seed_categories(db: Session) -> dict[str, Category]:
             category = Category(**payload)
             db.add(category)
             db.flush()
+        else:
+            for field, value in payload.items():
+                setattr(category, field, value)
+            category.is_active = True
         categories[category.slug] = category
     return categories
 
@@ -248,12 +276,14 @@ def seed_products(db: Session, categories: dict[str, Category], admin: User) -> 
     for index, payload in enumerate(SEED_PRODUCTS, start=1):
         product_data = payload.copy()
         category_slug = str(product_data.pop("category_slug"))
+        image_count = int(product_data.pop("image_count", 2))
         product = db.scalar(select(Product).where(Product.slug == product_data["slug"]))
         if product:
             sync_seed_product_images(
                 product,
                 str(product_data["name"]),
                 str(product_data["slug"]),
+                image_count,
             )
             continue
 
@@ -262,6 +292,7 @@ def seed_products(db: Session, categories: dict[str, Category], admin: User) -> 
             product,
             str(product_data["name"]),
             str(product_data["slug"]),
+            image_count,
         )
         db.add(product)
         db.flush()

@@ -25,7 +25,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <motion.article
-      className="group overflow-hidden rounded-lg border border-astraya-border bg-astraya-card shadow-sm transition-colors duration-300 hover:border-astraya-gold/70 hover:shadow-card"
+      className="group grid h-full grid-rows-[auto_1fr] overflow-hidden rounded-lg border border-astraya-border bg-astraya-card shadow-sm transition-colors duration-300 hover:border-astraya-gold/70 hover:shadow-card"
       style={{ transformStyle: 'preserve-3d' }}
       whileHover={
         prefersReducedMotion
@@ -68,15 +68,15 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
       </Link>
-      <div className="grid gap-4 p-5">
-        <div>
+      <div className="grid h-full grid-rows-[1fr_auto_auto] gap-4 p-5">
+        <div className="min-w-0">
           <div className="mb-2 flex items-center gap-1 font-button text-xs font-semibold text-astraya-gold">
             <Star size={14} fill="currentColor" aria-hidden="true" />
             <span>{product.average_rating.toFixed(1)}</span>
             <span className="text-astraya-text/45">({product.review_count})</span>
           </div>
           <Link to={`/products/${product.slug}`}>
-            <h3 className="font-display text-2xl font-semibold leading-tight text-astraya-navy transition hover:text-astraya-darkGold">
+            <h3 className="line-clamp-2 font-display text-2xl font-semibold leading-tight text-astraya-navy transition hover:text-astraya-darkGold">
               {product.name}
             </h3>
           </Link>

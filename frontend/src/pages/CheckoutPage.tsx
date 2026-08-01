@@ -18,13 +18,19 @@ import { getErrorMessage } from '@/utils/errors';
 import { activePrice, calculateClientTotals, formatPrice } from '@/utils/money';
 
 const checkoutSchema = z.object({
-  customer_name: z.string().min(2, 'Name is required'),
+  customer_name: z.string().trim().min(2, 'Name is required'),
   email: z.string().email('Enter a valid email'),
-  phone: z.string().min(7, 'Phone is required'),
-  address: z.string().min(8, 'Address is required'),
-  city: z.string().min(2, 'City is required'),
-  state: z.string().min(2, 'State is required'),
-  pincode: z.string().min(4, 'Pincode is required'),
+  phone: z
+    .string()
+    .trim()
+    .refine((value) => {
+      const digits = value.replace(/\D/g, '');
+      return /^\+?[0-9][0-9 ()-]+$/.test(value) && digits.length >= 7 && digits.length <= 15;
+    }, 'Enter a valid mobile number'),
+  address: z.string().trim().min(8, 'Complete address is required'),
+  city: z.string().trim().min(2, 'City is required'),
+  state: z.string().trim().min(2, 'State is required'),
+  pincode: z.string().regex(/^[1-9][0-9]{5}$/, 'Enter a valid 6-digit pincode'),
   coupon_code: z.string().optional(),
   special_instructions: z.string().optional(),
 });
@@ -68,6 +74,8 @@ export function CheckoutPage() {
         coupon_code: values.coupon_code || null,
         special_instructions: values.special_instructions || null,
         items: items.map((item) => ({
+          customization: item.customization ?? null,
+          preview_image: item.previewImage ?? null,
           product_id: item.product.id,
           quantity: item.quantity,
         })),
@@ -114,34 +122,47 @@ export function CheckoutPage() {
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold text-astraya-navy">
                 Full name
-                <Input {...register('customer_name')} />
+                <Input autoComplete="name" required {...register('customer_name')} />
                 {errors.customer_name && (
                   <span className="text-xs text-red-600">{errors.customer_name.message}</span>
                 )}
               </label>
               <label className="grid gap-2 text-sm font-semibold text-astraya-navy">
                 Email
-                <Input type="email" {...register('email')} />
+                <Input autoComplete="email" required type="email" {...register('email')} />
                 {errors.email && <span className="text-xs text-red-600">{errors.email.message}</span>}
               </label>
               <label className="grid gap-2 text-sm font-semibold text-astraya-navy">
                 Phone
-                <Input {...register('phone')} />
+                <Input
+                  autoComplete="tel"
+                  inputMode="tel"
+                  required
+                  type="tel"
+                  {...register('phone')}
+                />
                 {errors.phone && <span className="text-xs text-red-600">{errors.phone.message}</span>}
               </label>
               <label className="grid gap-2 text-sm font-semibold text-astraya-navy">
                 City
-                <Input {...register('city')} />
+                <Input autoComplete="address-level2" required {...register('city')} />
                 {errors.city && <span className="text-xs text-red-600">{errors.city.message}</span>}
               </label>
               <label className="grid gap-2 text-sm font-semibold text-astraya-navy">
                 State
-                <Input {...register('state')} />
+                <Input autoComplete="address-level1" required {...register('state')} />
                 {errors.state && <span className="text-xs text-red-600">{errors.state.message}</span>}
               </label>
               <label className="grid gap-2 text-sm font-semibold text-astraya-navy">
                 Pincode
-                <Input {...register('pincode')} />
+                <Input
+                  autoComplete="postal-code"
+                  inputMode="numeric"
+                  maxLength={6}
+                  pattern="[1-9][0-9]{5}"
+                  required
+                  {...register('pincode')}
+                />
                 {errors.pincode && (
                   <span className="text-xs text-red-600">{errors.pincode.message}</span>
                 )}
@@ -149,7 +170,7 @@ export function CheckoutPage() {
             </div>
             <label className="grid gap-2 text-sm font-semibold text-astraya-navy">
               Address
-              <Textarea {...register('address')} />
+              <Textarea autoComplete="street-address" required {...register('address')} />
               {errors.address && (
                 <span className="text-xs text-red-600">{errors.address.message}</span>
               )}
@@ -164,9 +185,10 @@ export function CheckoutPage() {
             <h2 className="font-serif text-3xl text-astraya-navy">Order summary</h2>
             <div className="mt-5 grid gap-3">
               {items.map((item) => (
-                <div key={item.product.id} className="flex justify-between gap-4 text-sm">
+                <div key={item.lineId} className="flex justify-between gap-4 text-sm">
                   <span>
-                    {item.product.name} x {item.quantity}
+                    {item.product.name}
+                    {item.customization ? ' · Custom' : ''} x {item.quantity}
                   </span>
                   <span>{formatPrice(item.quantity * activePrice(item.product))}</span>
                 </div>

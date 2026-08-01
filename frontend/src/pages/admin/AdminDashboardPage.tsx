@@ -1,11 +1,13 @@
 import { FormEvent, useState } from 'react';
 import {
   Boxes,
+  CalendarDays,
   ClipboardList,
   FolderPlus,
   Inbox,
   LayoutDashboard,
   Mail,
+  MapPin,
   PackagePlus,
   Trash2,
   Users,
@@ -13,6 +15,7 @@ import {
 import { Link } from 'react-router';
 
 import { EmptyState } from '@/components/sections/EmptyState';
+import { SmartImage } from '@/components/media/SmartImage';
 import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +24,7 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { adminService } from '@/services/admin-service';
 import { getErrorMessage } from '@/utils/errors';
+import { customizationSummary } from '@/utils/customization';
 import { formatPrice } from '@/utils/money';
 import { slugify } from '@/utils/slug';
 
@@ -116,7 +120,7 @@ export function AdminDashboardPage() {
           name,
           slug: String(form.get('slug') || slugify(name)),
           description: String(form.get('description') ?? ''),
-          image_url: String(form.get('image_url') || '/images/categories/signature-collection.png'),
+          image_url: String(form.get('image_url') || '/images/categories/signature-collection.jpg'),
           display_order: Number(form.get('display_order') || 0),
           is_active: true,
         }).then(() => undefined),
@@ -404,15 +408,79 @@ export function AdminDashboardPage() {
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <h2 className="font-serif text-2xl text-astraya-navy">{order.order_number}</h2>
-                    <p className="text-sm text-astraya-text/64">{order.customer_name} | {order.phone}</p>
+                    <p className="mt-1 flex items-center gap-2 text-sm text-astraya-text/64">
+                      <CalendarDays size={15} aria-hidden="true" />
+                      {new Date(order.created_at).toLocaleString('en-IN', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </p>
                   </div>
                   <p className="text-xl font-bold text-astraya-navy">{formatPrice(order.grand_total)}</p>
                 </div>
-                <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
-                  <p className="text-sm leading-6 text-astraya-text/70">
-                    {order.items.map((item) => `${item.product_name} x ${item.quantity}`).join(', ')}
+
+                <div className="mt-5 grid gap-2 text-sm text-astraya-text/72 sm:grid-cols-2">
+                  <p className="font-semibold text-astraya-navy">{order.customer_name}</p>
+                  <a className="hover:text-astraya-darkGold" href={`mailto:${order.email}`}>
+                    {order.email}
+                  </a>
+                  <a className="hover:text-astraya-darkGold" href={`tel:${order.phone}`}>
+                    {order.phone}
+                  </a>
+                  <p className="flex gap-2 sm:col-span-2">
+                    <MapPin className="mt-0.5 shrink-0 text-astraya-gold" size={16} aria-hidden="true" />
+                    <span>
+                      {order.address}, {order.city}, {order.state} - {order.pincode}
+                    </span>
                   </p>
+                </div>
+
+                <div className="mt-5 border-y border-astraya-navy/10">
+                  {order.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="grid gap-3 border-b border-astraya-navy/10 py-4 last:border-b-0 sm:grid-cols-[5.5rem_1fr_auto]"
+                    >
+                      {item.preview_image ? (
+                        <div className="relative aspect-square overflow-hidden rounded-md bg-astraya-cream">
+                          <SmartImage
+                            alt={`${item.product_name} custom preview`}
+                            src={item.preview_image}
+                          />
+                        </div>
+                      ) : (
+                        <div className="hidden sm:block" aria-hidden="true" />
+                      )}
+                      <div>
+                        <p className="font-semibold text-astraya-navy">
+                          {item.product_name}
+                        </p>
+                        <p className="mt-1 text-sm text-astraya-text/64">
+                          Quantity {item.quantity} at {formatPrice(item.unit_price)}
+                        </p>
+                        {item.customization && (
+                          <p className="mt-2 text-xs leading-5 text-astraya-text/66">
+                            {customizationSummary(item.customization).join(' · ')}
+                          </p>
+                        )}
+                      </div>
+                      <p className="font-semibold text-astraya-navy">
+                        {formatPrice(item.line_total)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+                  <div className="text-xs leading-5 text-astraya-text/62">
+                    <p>Email notification: {order.email_notification_status ?? 'not attempted'}</p>
+                    <p>WhatsApp notification: {order.whatsapp_notification_status ?? 'not attempted'}</p>
+                    {order.notification_error && (
+                      <p className="mt-1 text-red-700">{order.notification_error}</p>
+                    )}
+                  </div>
                   <select
+                    aria-label={`Status for ${order.order_number}`}
                     className="h-11 rounded-md border border-astraya-navy/15 bg-white px-3 text-sm"
                     defaultValue={order.status}
                     onChange={(event) =>

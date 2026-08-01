@@ -41,9 +41,9 @@ const flameFragmentShader = `
 
     vec2 coreUv = vec2((vUv.x - 0.5) * 1.7, vUv.y - 0.28);
     float core = 1.0 - smoothstep(0.02, 0.24, length(coreUv));
-    vec3 amber = vec3(1.8, 0.28, 0.025);
-    vec3 gold = vec3(3.4, 1.35, 0.16);
-    vec3 ivory = vec3(5.2, 3.9, 1.45);
+    vec3 amber = vec3(1.05, 0.16, 0.02);
+    vec3 gold = vec3(1.7, 0.72, 0.1);
+    vec3 ivory = vec3(2.4, 1.72, 0.62);
     vec3 color = mix(amber, gold, smoothstep(0.08, 0.92, vUv.y));
     color = mix(color, ivory, core);
 
@@ -155,7 +155,7 @@ export function Flame({ energy, isLit, onToggle, reducedMotion }: FlameProps) {
   return (
     <group
       ref={outerRef}
-      position={[0, 1.68, 0.02]}
+      position={[0, 1.64, 0.02]}
       onClick={(event) => {
         event.stopPropagation();
         onToggle();
@@ -169,7 +169,7 @@ export function Flame({ energy, isLit, onToggle, reducedMotion }: FlameProps) {
       <Billboard follow>
         <group ref={flickerRef}>
           <mesh>
-            <planeGeometry args={[0.5, 0.96, 24, 24]} />
+            <planeGeometry args={[0.4, 0.82, 24, 24]} />
             <shaderMaterial
               ref={materialRef}
               blending={AdditiveBlending}

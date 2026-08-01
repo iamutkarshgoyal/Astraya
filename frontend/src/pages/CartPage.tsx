@@ -8,6 +8,7 @@ import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
 import { activePrice, calculateClientTotals, formatPrice } from '@/utils/money';
+import { customizationSummary } from '@/utils/customization';
 
 export function CartPage() {
   const { items, removeItem, updateQuantity } = useCart();
@@ -37,13 +38,17 @@ export function CartPage() {
           <div className="grid gap-4">
             {items.map((item) => (
               <article
-                key={item.product.id}
+                key={item.lineId}
                 className="grid gap-4 rounded-lg border border-astraya-navy/10 bg-white p-4 shadow-sm sm:grid-cols-[9rem_1fr_auto]"
               >
                 <div className="relative aspect-square w-full overflow-hidden rounded-md bg-astraya-cream">
                   <SmartImage
                     alt={item.product.name}
-                    src={item.product.primary_image_url ?? item.product.images[0]?.image_url}
+                    src={
+                      item.previewImage ??
+                      item.product.primary_image_url ??
+                      item.product.images[0]?.image_url
+                    }
                   />
                 </div>
                 <div>
@@ -53,6 +58,18 @@ export function CartPage() {
                   <p className="mt-2 text-sm leading-6 text-astraya-text/68">
                     {item.product.short_description}
                   </p>
+                  {item.customization && (
+                    <ul className="mt-3 flex flex-wrap gap-2 text-xs text-astraya-text/66">
+                      {customizationSummary(item.customization).map((detail) => (
+                        <li
+                          key={detail}
+                          className="rounded-sm bg-astraya-cream px-2 py-1"
+                        >
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                   <p className="mt-3 font-bold text-astraya-navy">
                     {formatPrice(activePrice(item.product))}
                   </p>
@@ -61,14 +78,14 @@ export function CartPage() {
                   <QuantityStepper
                     max={Math.max(1, item.product.stock_quantity)}
                     value={item.quantity}
-                    onChange={(value) => updateQuantity(item.product.id, value)}
+                    onChange={(value) => updateQuantity(item.lineId, value)}
                   />
                   <Button
                     aria-label="Remove item"
                     size="icon"
                     type="button"
                     variant="ghost"
-                    onClick={() => removeItem(item.product.id)}
+                    onClick={() => removeItem(item.lineId)}
                   >
                     <Trash2 size={18} aria-hidden="true" />
                   </Button>

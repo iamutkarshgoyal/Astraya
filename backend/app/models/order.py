@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import JSON, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
@@ -38,6 +38,17 @@ class Order(TimestampMixin, Base):
         index=True,
     )
     whatsapp_message: Mapped[str | None] = mapped_column(Text)
+    email_notification_status: Mapped[str] = mapped_column(
+        String(40),
+        default="pending",
+        nullable=False,
+    )
+    whatsapp_notification_status: Mapped[str] = mapped_column(
+        String(40),
+        default="pending",
+        nullable=False,
+    )
+    notification_error: Mapped[str | None] = mapped_column(Text)
 
     user: Mapped["User | None"] = relationship(back_populates="orders")
     items: Mapped[list["OrderItem"]] = relationship(
@@ -62,6 +73,8 @@ class OrderItem(TimestampMixin, Base):
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     line_total: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    customization: Mapped[dict[str, object] | None] = mapped_column(JSON)
+    preview_image: Mapped[str | None] = mapped_column(Text)
 
     order: Mapped[Order] = relationship(back_populates="items")
     product: Mapped["Product | None"] = relationship(back_populates="order_items")

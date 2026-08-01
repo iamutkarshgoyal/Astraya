@@ -39,7 +39,14 @@ describe('money utilities', () => {
   });
 
   it('calculates coupon, shipping, tax, and grand total', () => {
-    const items: CartLine[] = [{ product: baseProduct, quantity: 2 }];
+    const items: CartLine[] = [
+      {
+        lineId: `product-${baseProduct.id}-standard`,
+        variantKey: 'standard',
+        product: baseProduct,
+        quantity: 2,
+      },
+    ];
     const totals = calculateClientTotals(items, 'ASTRAYA10');
 
     expect(totals.subtotal).toBe(2198);

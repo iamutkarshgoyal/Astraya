@@ -9,11 +9,13 @@ import {
   useState,
 } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowDown, ArrowRight, Flame, Rotate3D, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowRight, Check, Flame, Smartphone } from 'lucide-react';
 import { Link } from 'react-router';
 
 import { SceneFallback } from '@/components/three/SceneFallback';
 import { Button } from '@/components/ui/button';
+import { HERO_CANDLE_PRODUCTS } from '@/data/candleVisuals';
+import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
 
 const CandleScene = lazy(() => import('@/components/three/CandleScene'));
 
@@ -25,9 +27,13 @@ type WebGLCapability = {
 function detectWebGLCapability(): WebGLCapability {
   try {
     const canvas = document.createElement('canvas');
-    const context =
+    const preferredContext =
       canvas.getContext('webgl2', { failIfMajorPerformanceCaveat: true }) ??
       canvas.getContext('webgl', { failIfMajorPerformanceCaveat: true });
+    const context =
+      preferredContext ??
+      canvas.getContext('webgl2') ??
+      canvas.getContext('webgl');
     if (!context) {
       return { softwareRenderer: false, supported: false };
     }
@@ -85,6 +91,7 @@ export function CandleHero() {
   const heroRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useReducedMotion());
   const [isLit, setIsLit] = useState(true);
+  const [selectedProductIndex, setSelectedProductIndex] = useState(0);
   const [webGLCapability] = useState(detectWebGLCapability);
   const [isMobile, setIsMobile] = useState(getMobileScenePreference);
   const [sceneFailed, setSceneFailed] = useState(false);
@@ -92,6 +99,9 @@ export function CandleHero() {
     () => document.visibilityState === 'visible',
   );
   const [isHeroVisible, setIsHeroVisible] = useState(true);
+  const { requestAccess, status: orientationStatus, tiltRef } =
+    useDeviceOrientation(prefersReducedMotion);
+  const selectedProduct = HERO_CANDLE_PRODUCTS[selectedProductIndex];
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 767px)');
@@ -125,7 +135,7 @@ export function CandleHero() {
   const interactionLabel = isLit
     ? 'Extinguish the Astraya candle'
     : 'Relight the Astraya candle';
-  const fallback = <SceneFallback isLit={isLit} />;
+  const fallback = <SceneFallback image={selectedProduct.image} isLit={isLit} />;
   const limitedCpu =
     typeof navigator.hardwareConcurrency === 'number' &&
     navigator.hardwareConcurrency <= 4;
@@ -133,7 +143,6 @@ export function CandleHero() {
     isMobile || limitedCpu || webGLCapability.softwareRenderer;
   const canRenderScene =
     webGLCapability.supported &&
-    !webGLCapability.softwareRenderer &&
     !sceneFailed;
 
   return (
@@ -156,6 +165,8 @@ export function CandleHero() {
                 onContextLost={() => setSceneFailed(true)}
                 onToggle={toggleCandle}
                 reducedMotion={prefersReducedMotion}
+                tiltRef={tiltRef}
+                visual={selectedProduct.visual}
               />
             </Suspense>
           </SceneBoundary>
@@ -173,25 +184,13 @@ export function CandleHero() {
           animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ delay: 0.65, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="candle-hero__brand-lockup">
-            <img
-              alt="Astraya"
-              className="h-14 w-14 rounded-full object-cover"
-              height="56"
-              src="/assets/astraya/logo/astraya-logo.jpg"
-              width="56"
-            />
-            <div>
-              <p className="font-button text-[0.68rem] font-semibold uppercase text-astraya-gold">
-                Hand-poured soy candles
-              </p>
-              <p className="mt-1 text-sm text-white/60">Crafted in India</p>
-            </div>
-          </div>
+          <p className="font-button text-[0.68rem] font-semibold uppercase text-astraya-gold">
+            Hand-poured soy candles · Crafted in India
+          </p>
 
           <h1
             id="candle-hero-title"
-            className="mt-5 font-display text-5xl font-semibold leading-none text-white sm:mt-7 sm:text-7xl md:text-8xl"
+            className="mt-4 font-display text-5xl font-semibold leading-none text-white sm:mt-6 sm:text-7xl md:text-8xl"
           >
             Astraya
           </h1>
@@ -220,32 +219,53 @@ export function CandleHero() {
               <Link to="/categories">Explore candles</Link>
             </Button>
           </div>
-
-          <div
-            className="candle-hero__qualities mt-5 flex flex-wrap gap-2 sm:mt-8"
-            aria-label="Candle qualities"
-          >
-            <span className="candle-hero__glass-chip">
-              <Sparkles size={14} aria-hidden="true" />
-              Soy wax
-            </span>
-            <span className="candle-hero__glass-chip">
-              <Rotate3D size={14} aria-hidden="true" />
-              Drag gently to explore
-            </span>
-          </div>
         </motion.div>
       </div>
 
-      <button
-        className="candle-hero__flame-target"
-        type="button"
-        aria-label={interactionLabel}
-        title={interactionLabel}
-        onClick={toggleCandle}
+      <div
+        className="candle-hero__product-rail"
+        aria-label="Choose a candle to view in 3D"
       >
-        <span aria-hidden="true" />
-      </button>
+        {HERO_CANDLE_PRODUCTS.map((product, index) => (
+          <button
+            key={product.id}
+            className="candle-hero__product-thumb"
+            data-active={index === selectedProductIndex ? 'true' : 'false'}
+            type="button"
+            aria-label={`View ${product.name} in 3D`}
+            aria-pressed={index === selectedProductIndex}
+            title={product.name}
+            onClick={() => setSelectedProductIndex(index)}
+          >
+            <img alt="" aria-hidden="true" src={product.image} />
+          </button>
+        ))}
+        {orientationStatus !== 'unsupported' && (
+          <button
+            className="candle-hero__sensor"
+            type="button"
+            aria-label={
+              orientationStatus === 'enabled'
+                ? 'Device motion is enabled'
+                : 'Enable device motion for the 3D candle'
+            }
+            aria-pressed={orientationStatus === 'enabled'}
+            disabled={orientationStatus === 'enabled'}
+            title={
+              orientationStatus === 'enabled'
+                ? 'Device motion enabled'
+                : 'Enable device motion'
+            }
+            onClick={() => void requestAccess()}
+          >
+            {orientationStatus === 'enabled' ? (
+              <Check size={17} aria-hidden="true" />
+            ) : (
+              <Smartphone size={17} aria-hidden="true" />
+            )}
+          </button>
+        )}
+      </div>
 
       <div className="candle-hero__interaction">
         <AnimatePresence mode="wait">
@@ -280,7 +300,12 @@ export function CandleHero() {
       </a>
 
       <p className="sr-only" aria-live="polite">
-        {isLit ? 'The Astraya candle is lit.' : 'The Astraya candle is extinguished.'}
+        {isLit ? 'The Astraya candle is lit.' : 'The Astraya candle is extinguished.'}{' '}
+        {orientationStatus === 'denied'
+          ? 'Device motion permission was not granted.'
+          : orientationStatus === 'enabled'
+            ? 'Device motion is enabled.'
+            : ''}
       </p>
     </section>
   );

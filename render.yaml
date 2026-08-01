@@ -26,7 +26,33 @@ services:
       - key: ADMIN_EMAIL
         value: admin@astraya.in
       - key: OWNER_WHATSAPP_PHONE
-        value: "919876543210"
+        value: "918958383707"
+      - key: OWNER_NOTIFICATION_EMAIL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM_EMAIL
+        sync: false
+      - key: SMTP_USE_TLS
+        value: "true"
+      - key: SMTP_USE_SSL
+        value: "false"
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_API_VERSION
+        value: v23.0
+      - key: WHATSAPP_ORDER_TEMPLATE_NAME
+        sync: false
+      - key: WHATSAPP_TEMPLATE_LANGUAGE
+        value: en_US
       - key: DEFAULT_SHIPPING_CHARGE
         value: "99"
       - key: TAX_RATE_PERCENT

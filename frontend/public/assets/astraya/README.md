@@ -2,9 +2,9 @@
 
 This directory contains web-optimised, brand-owned Astraya assets.
 
-- `logo/`: the public profile logo used in the header, hero, and 3D candle label
+- `logo/`: the public profile logo used once in the navigation header
 - `instagram/`: clean post images in AVIF and JPEG formats
-- `products/`: staging notes for exact product photography
+- `products/`: named campaign copies, hero thumbnails, and HeartGlow colour views
 - `backgrounds/`: campaign and full-width background images
 - `textures/`: optional compressed WebGL textures
 

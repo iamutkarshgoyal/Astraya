@@ -27,6 +27,15 @@ def test_build_whatsapp_message_contains_order_summary() -> None:
                 quantity=1,
                 unit_price=Decimal("1099.00"),
                 line_total=Decimal("1099.00"),
+                customization={
+                    "wax_color": "#c94a55",
+                    "wax_color_name": "Ruby",
+                    "decoration": "hearts",
+                    "decoration_label": "Hearts",
+                    "decoration_color": "#ef7f98",
+                    "glitter": True,
+                },
+                preview_image="data:image/jpeg;base64,cHJldmlldw==",
             )
         ],
     )
@@ -36,6 +45,9 @@ def test_build_whatsapp_message_contains_order_summary() -> None:
 
     assert "Order Number: AST-000001" in message
     assert "Lunar Bloom Soy Candle" in message
+    assert "customer@example.com" in message
+    assert "Ruby wax, Hearts add-on, fine glitter" in message
+    assert "Rajasthan - 302001" in message
     assert "Grand Total: Rs 1252.95" in message
     assert whatsapp_url.startswith("https://wa.me/")
     assert "AST-000001" in whatsapp_url

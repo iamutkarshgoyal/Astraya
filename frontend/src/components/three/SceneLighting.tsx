@@ -65,10 +65,10 @@ export function SceneLighting({
 
   return (
     <>
-      <ambientLight ref={ambientRef} color="#91a1b8" intensity={0.35} />
+      <ambientLight ref={ambientRef} color="#aeb3a4" intensity={0.35} />
       <hemisphereLight
         ref={skyLightRef}
-        args={['#b5cce0', '#05070c', 0.5]}
+        args={['#d7d7c4', '#080a07', 0.5]}
       />
       <directionalLight
         ref={keyLightRef}
@@ -125,7 +125,7 @@ export function SceneLighting({
             target={candlePosition}
           />
           <Lightformer
-            color="#9ebdc6"
+            color="#a8c2b4"
             form="rect"
             intensity={1.8}
             position={[candlePosition[0] + 4, 1, 1]}
@@ -133,7 +133,7 @@ export function SceneLighting({
             target={candlePosition}
           />
           <Lightformer
-            color="#d89e8f"
+            color="#d29a87"
             form="circle"
             intensity={1.3}
             position={[candlePosition[0] - 3.5, -0.5, 2]}

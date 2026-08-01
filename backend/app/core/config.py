@@ -28,7 +28,20 @@ class Settings(BaseSettings):
     google_client_id: str = ""
     password_reset_token_expire_minutes: int = 30
     expose_password_reset_token: bool = True
-    owner_whatsapp_phone: str = "919876543210"
+    owner_whatsapp_phone: str = "918958383707"
+    owner_notification_email: str = ""
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_from_email: str = ""
+    smtp_use_tls: bool = True
+    smtp_use_ssl: bool = False
+    whatsapp_access_token: str = ""
+    whatsapp_phone_number_id: str = ""
+    whatsapp_api_version: str = "v23.0"
+    whatsapp_order_template_name: str = ""
+    whatsapp_template_language: str = "en_US"
     default_shipping_charge: int = 99
     tax_rate_percent: int = 5
     admin_email: str = "admin@astraya.in"
@@ -80,6 +93,10 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.environment.lower() == "production"
+
+    @property
+    def notification_email(self) -> str:
+        return (self.owner_notification_email or self.admin_email).strip()
 
 
 settings = Settings()

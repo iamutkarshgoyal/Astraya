@@ -21,10 +21,20 @@ Create a `.env` file from `.env.example`, then set production secrets:
 ```bash
 SECRET_KEY=replace-with-a-long-random-value
 ADMIN_PASSWORD=replace-with-a-strong-admin-password
-OWNER_WHATSAPP_PHONE=919876543210
+OWNER_WHATSAPP_PHONE=918958383707
 VITE_API_BASE_URL=/api
 BACKEND_CORS_ORIGINS=https://astrayacandles.com,https://www.astrayacandles.com
 CDN_BASE_URL=https://cdn.jsdelivr.net/gh/iamutkarshgoyal/Astraya@main/images/products
+OWNER_NOTIFICATION_EMAIL=orders@example.com
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USERNAME=replace-with-smtp-user
+SMTP_PASSWORD=replace-with-smtp-password
+SMTP_FROM_EMAIL=orders@astrayacandles.com
+WHATSAPP_ACCESS_TOKEN=replace-with-meta-system-user-token
+WHATSAPP_PHONE_NUMBER_ID=replace-with-meta-phone-number-id
+WHATSAPP_ORDER_TEMPLATE_NAME=astraya_new_order
+WHATSAPP_TEMPLATE_LANGUAGE=en_US
 ```
 
 Build and run:
@@ -43,8 +53,9 @@ The canonical production URL is `https://astrayacandles.com`. The frontend
 metadata, sitemap, robots file, structured data, and backend CORS defaults use
 this apex domain. `https://www.astrayacandles.com` redirects to the apex domain.
 
-The domain did not resolve in public DNS on July 30, 2026. Complete these steps
-before announcing it:
+The domain and TLS were verified on July 31, 2026. The apex returns the Netlify
+site, `www` redirects to the apex, and `/api/health` reaches the Render service
+with its database connected. Keep this configuration when changing DNS:
 
 1. Add `astrayacandles.com` and `www.astrayacandles.com` in Netlify under
    **Domain management**.
@@ -65,6 +76,25 @@ curl -I https://www.astrayacandles.com
 curl https://astrayacandles.com/robots.txt
 curl https://astrayacandles.com/sitemap.xml
 ```
+
+## Order Notifications
+
+Every order stores the customer name, email, mobile number, street address,
+city, state, pincode, timestamp, line prices, and customization preview. Owner
+notifications are queued after checkout so a mail or Meta API outage does not
+reject a valid order.
+
+Set `OWNER_NOTIFICATION_EMAIL` and the SMTP variables in Render to receive the
+full order email and custom preview attachments. Set
+`WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, and
+`OWNER_WHATSAPP_PHONE` to send the same summary and previews through WhatsApp
+Cloud API.
+
+Meta may reject free-form business-initiated WhatsApp messages outside its
+allowed conversation window. Create an approved utility template with one body
+text variable, then set `WHATSAPP_ORDER_TEMPLATE_NAME`; the API sends the full
+summary through that variable before sending custom preview media. The admin
+Orders view records `sent`, `failed`, or `not_configured` for each channel.
 
 ## Database
 
