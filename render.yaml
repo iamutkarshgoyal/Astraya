@@ -24,7 +24,7 @@ services:
       - key: BACKEND_CORS_ORIGINS
         value: https://astrayacandles.com,https://www.astrayacandles.com
       - key: ADMIN_EMAIL
-        value: admin@astraya.in
+        sync: false
       - key: OWNER_WHATSAPP_PHONE
         value: "918958383707"
       - key: OWNER_NOTIFICATION_EMAIL
