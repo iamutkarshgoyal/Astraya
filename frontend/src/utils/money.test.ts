@@ -47,16 +47,27 @@ describe('money utilities', () => {
         quantity: 2,
       },
     ];
-    const totals = calculateClientTotals(items, 'ASTRAYA10');
+    const totals = calculateClientTotals(items, 'ASTRAYA10', 'Uttar Pradesh', 'cod');
 
     expect(totals.subtotal).toBe(2198);
     expect(totals.discount).toBe(219.8);
-    expect(totals.shipping).toBe(99);
+    expect(totals.shipping).toBe(100);
+    expect(totals.codCharge).toBe(29);
     expect(totals.tax).toBeCloseTo(98.91);
-    expect(totals.grandTotal).toBeCloseTo(2176.11);
+    expect(totals.grandTotal).toBeCloseTo(2206.11);
   });
 
   it('calculates discount percentage', () => {
     expect(savingPercent(baseProduct)).toBe(15);
+  });
+
+  it('rounds a 20% marked-up list price to a 17% displayed discount', () => {
+    const markedUpProduct = {
+      ...baseProduct,
+      price: '180.00',
+      discount_price: '150.00',
+    };
+
+    expect(savingPercent(markedUpProduct)).toBe(17);
   });
 });

@@ -1,37 +1,23 @@
+import { useEffect, useState } from 'react';
 import {
-  lazy,
-  Suspense,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { useReducedMotion } from 'framer-motion';
-import {
-  Box,
   Check,
   CircleOff,
-  Flame,
   Flower2,
   Heart,
-  Images as ImagesIcon,
   RefreshCcw,
   ShoppingBag,
-  Smartphone,
   Sparkles,
   Star,
 } from 'lucide-react';
 
 import { QuantityStepper } from '@/components/commerce/QuantityStepper';
 import { SmartImage } from '@/components/media/SmartImage';
-import type { ProductViewerHandle } from '@/components/three/ProductViewer3D';
 import { Button } from '@/components/ui/button';
 import {
   DECORATION_OPTIONS,
   WAX_COLOR_OPTIONS,
 } from '@/data/candleVisuals';
 import { useCart } from '@/hooks/useCart';
-import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
 import { useWishlist } from '@/hooks/useWishlist';
 import type { Product, ProductImage } from '@/types/catalog';
 import type {
@@ -39,23 +25,13 @@ import type {
   CandleDecoration,
 } from '@/types/customization';
 import { cn } from '@/utils/cn';
-import {
-  candleVisualFromCustomization,
-  defaultCustomizationForProduct,
-} from '@/utils/customization';
-import { activePrice, formatPrice } from '@/utils/money';
-
-const ProductViewer3D = lazy(async () => {
-  const module = await import('@/components/three/ProductViewer3D');
-  return { default: module.ProductViewer3D };
-});
+import { defaultCustomizationForProduct } from '@/utils/customization';
+import { activePrice, formatPrice, savingPercent } from '@/utils/money';
 
 type ProductPurchaseExperienceProps = {
   images: ProductImage[];
   product: Product;
 };
-
-type MediaMode = '3d' | 'photos';
 
 function DecorationIcon({ decoration }: { decoration: CandleDecoration }) {
   if (decoration === 'none') {
@@ -75,43 +51,35 @@ export function ProductPurchaseExperience({
   const { isWishlisted, toggleWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState<string | null>(null);
-  const [mediaMode, setMediaMode] = useState<MediaMode>('3d');
-  const [isLit, setIsLit] = useState(true);
   const [customization, setCustomization] = useState<CandleCustomization>(() =>
     defaultCustomizationForProduct(product),
   );
   const [customizationTouched, setCustomizationTouched] = useState(false);
   const [cartStatus, setCartStatus] = useState<string | null>(null);
-  const viewerRef = useRef<ProductViewerHandle>(null);
-  const prefersReducedMotion = Boolean(useReducedMotion());
-  const deviceOrientation = useDeviceOrientation(prefersReducedMotion);
+  // The live catalogue contains ready-made, boxed products. Their details and
+  // availability are set by Astraya, so customers should not be offered a
+  // customisation flow that cannot be fulfilled from the listed stock.
+  const supportsCustomization = false;
+  const inventoryLabel = product.stock_quantity === 1 ? 'box' : 'boxes';
+  const saving = savingPercent(product);
 
   useEffect(() => {
     setActiveImage(product.primary_image_url ?? images[0]?.image_url ?? null);
     setQuantity(1);
-    setMediaMode('3d');
-    setIsLit(true);
     setCustomization(defaultCustomizationForProduct(product));
     setCustomizationTouched(false);
     setCartStatus(null);
   }, [images, product]);
 
-  const candleVisual = useMemo(
-    () => candleVisualFromCustomization(product, customization),
-    [customization, product],
-  );
-
   const updateCustomization = (next: Partial<CandleCustomization>) => {
     setCustomization((current) => ({ ...current, ...next }));
     setCustomizationTouched(true);
-    setMediaMode('3d');
     setCartStatus(null);
   };
 
   const resetCustomization = () => {
     setCustomization(defaultCustomizationForProduct(product));
     setCustomizationTouched(false);
-    setMediaMode('3d');
     setCartStatus(null);
   };
 
@@ -119,12 +87,9 @@ export function ProductPurchaseExperience({
     if (customizationTouched) {
       addItem(product, quantity, {
         customization,
-        previewImage:
-          viewerRef.current?.capturePreview() ??
-          activeImage ??
-          product.primary_image_url,
+        previewImage: activeImage ?? product.primary_image_url,
       });
-      setCartStatus('Your personalised candle and preview were added to the cart.');
+      setCartStatus('Your personalised candle was added to the cart.');
       return;
     }
 
@@ -138,117 +103,14 @@ export function ProductPurchaseExperience({
     <section className="mt-8 grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
       <div className="min-w-0">
         <div className="relative h-[clamp(25rem,58vw,42rem)] overflow-hidden rounded-lg border border-astraya-navy/10 bg-[#e9e4da] shadow-card">
-          <Suspense
-            fallback={
-              <div className="flex h-full items-center justify-center text-sm text-astraya-text/62">
-                Preparing your candle...
-              </div>
-            }
-          >
-            <ProductViewer3D
-              ref={viewerRef}
-              active={mediaMode === '3d'}
-              className={cn(
-                'absolute inset-0 min-h-0 transition-opacity duration-300',
-                mediaMode === 'photos'
-                  ? 'pointer-events-none opacity-0'
-                  : 'opacity-100',
-              )}
-              fallbackImage={activeImage ?? product.primary_image_url}
-              isLit={isLit}
-              onToggle={() => setIsLit((current) => !current)}
-              reducedMotion={prefersReducedMotion}
-              tiltRef={deviceOrientation.tiltRef}
-              visual={candleVisual}
-            />
-          </Suspense>
-
-          {mediaMode === 'photos' && (
-            <SmartImage
-              alt={product.name}
-              className="absolute inset-0 h-full w-full object-cover"
-              src={activeImage ?? product.primary_image_url ?? undefined}
-            />
-          )}
-
-          <div
-            className="absolute left-3 top-3 z-10 flex rounded-md border border-white/45 bg-white/80 p-1 shadow-sm backdrop-blur-md"
-            aria-label="Product view"
-          >
-            <button
-              aria-pressed={mediaMode === '3d'}
-              className={cn(
-                'flex h-10 min-w-20 items-center justify-center gap-2 rounded px-3 text-xs font-semibold transition-colors',
-                mediaMode === '3d'
-                  ? 'bg-astraya-navy text-white'
-                  : 'text-astraya-navy hover:bg-white',
-              )}
-              type="button"
-              onClick={() => setMediaMode('3d')}
-            >
-              <Box size={17} aria-hidden="true" />
-              3D
-            </button>
-            <button
-              aria-pressed={mediaMode === 'photos'}
-              className={cn(
-                'flex h-10 min-w-20 items-center justify-center gap-2 rounded px-3 text-xs font-semibold transition-colors',
-                mediaMode === 'photos'
-                  ? 'bg-astraya-navy text-white'
-                  : 'text-astraya-navy hover:bg-white',
-              )}
-              type="button"
-              onClick={() => setMediaMode('photos')}
-            >
-              <ImagesIcon size={17} aria-hidden="true" />
-              Photos
-            </button>
-          </div>
-
-          {mediaMode === '3d' && (
-            <div className="absolute inset-x-3 bottom-3 z-10 flex items-end justify-between gap-3">
-              <Button
-                className="border-white/45 bg-white/85 text-astraya-navy shadow-sm backdrop-blur-md hover:bg-white"
-                size="sm"
-                type="button"
-                variant="outline"
-                onClick={() => setIsLit((current) => !current)}
-              >
-                <Flame
-                  size={17}
-                  fill={isLit ? 'currentColor' : 'none'}
-                  aria-hidden="true"
-                />
-                {isLit ? 'Blow out' : 'Light again'}
-              </Button>
-              {deviceOrientation.status !== 'unsupported' && (
-                <Button
-                  aria-label={
-                    deviceOrientation.status === 'enabled'
-                      ? 'Device motion enabled'
-                      : 'Enable device motion'
-                  }
-                  className="border-white/45 bg-white/85 text-astraya-navy shadow-sm backdrop-blur-md hover:bg-white"
-                  disabled={deviceOrientation.status === 'enabled'}
-                  size="icon"
-                  title={
-                    deviceOrientation.status === 'enabled'
-                      ? 'Device motion enabled'
-                      : 'Move the 3D candle with your device'
-                  }
-                  type="button"
-                  variant="outline"
-                  onClick={() => void deviceOrientation.requestAccess()}
-                >
-                  {deviceOrientation.status === 'enabled' ? (
-                    <Check size={18} aria-hidden="true" />
-                  ) : (
-                    <Smartphone size={18} aria-hidden="true" />
-                  )}
-                </Button>
-              )}
-            </div>
-          )}
+          <SmartImage
+            alt={product.name}
+            className="absolute inset-0 h-full w-full object-cover"
+            src={activeImage ?? product.primary_image_url ?? undefined}
+          />
+          <span className="absolute left-3 top-3 rounded-md border border-white/45 bg-white/80 px-3 py-2 text-xs font-semibold text-astraya-navy shadow-sm backdrop-blur-md">
+            Product photos
+          </span>
         </div>
 
         <div className="mt-3 grid grid-cols-4 gap-3">
@@ -258,15 +120,12 @@ export function ProductPurchaseExperience({
               aria-label={`View ${image.alt_text || product.name}`}
               className={cn(
                 'relative aspect-[4/3] overflow-hidden rounded-md border bg-white transition-colors',
-                activeImage === image.image_url && mediaMode === 'photos'
+                activeImage === image.image_url
                   ? 'border-astraya-gold ring-1 ring-astraya-gold'
                   : 'border-astraya-navy/10 hover:border-astraya-gold/60',
               )}
               type="button"
-              onClick={() => {
-                setActiveImage(image.image_url);
-                setMediaMode('photos');
-              }}
+              onClick={() => setActiveImage(image.image_url)}
             >
               <SmartImage
                 alt={image.alt_text}
@@ -305,6 +164,11 @@ export function ProductPurchaseExperience({
               {formatPrice(product.price)}
             </p>
           )}
+          {saving && (
+            <span className="mb-1 rounded-sm bg-astraya-gold px-2 py-1 font-button text-xs font-bold uppercase tracking-[0.1em] text-astraya-ink">
+              {saving}% off
+            </span>
+          )}
         </div>
 
         <dl className="mt-8 grid gap-4 rounded-lg border border-astraya-navy/10 bg-white p-5 sm:grid-cols-2">
@@ -334,10 +198,11 @@ export function ProductPurchaseExperience({
           )}
         </dl>
 
-        <section
-          className="mt-8 border-y border-astraya-navy/10 py-6"
-          aria-labelledby="candle-customizer-title"
-        >
+        {supportsCustomization && (
+          <section
+            className="mt-8 border-y border-astraya-navy/10 py-6"
+            aria-labelledby="candle-customizer-title"
+          >
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-astraya-gold">
@@ -480,10 +345,11 @@ export function ProductPurchaseExperience({
           </div>
 
           <p className="mt-4 text-xs leading-5 text-astraya-text/58">
-            Your interactive preview is saved with the cart item and included in
-            the order.
+            Your selected product photo and customisation choices are included
+            with the order.
           </p>
-        </section>
+          </section>
+        )}
 
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <QuantityStepper
@@ -515,7 +381,7 @@ export function ProductPurchaseExperience({
         </div>
         <p className="mt-3 text-sm text-astraya-text/58">
           {product.stock_quantity > 0
-            ? `${product.stock_quantity} pieces available`
+            ? `${product.stock_quantity} ${inventoryLabel} available`
             : 'Currently sold out'}
         </p>
         <p

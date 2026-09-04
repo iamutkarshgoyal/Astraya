@@ -17,7 +17,7 @@ def get_admin_stats(db: Session) -> AdminStats:
             db.scalar(
                 select(func.count())
                 .select_from(Order)
-                .where(Order.status == "pending_whatsapp")
+                .where(Order.status.in_(("payment_pending", "confirmed", "packed")))
             )
             or 0
         ),

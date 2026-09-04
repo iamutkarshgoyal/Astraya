@@ -3,6 +3,7 @@ from app.models.category import Category
 from app.models.contact_message import ContactMessage
 from app.models.newsletter import NewsletterSubscriber
 from app.models.order import Order, OrderItem
+from app.models.owner_otp_challenge import OwnerOtpChallenge
 from app.models.product import Product
 from app.models.product_image import ProductImage
 from app.models.review import Review
@@ -16,6 +17,7 @@ __all__ = [
     "NewsletterSubscriber",
     "Order",
     "OrderItem",
+    "OwnerOtpChallenge",
     "Product",
     "ProductImage",
     "Review",

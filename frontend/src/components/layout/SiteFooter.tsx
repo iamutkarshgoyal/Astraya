@@ -18,13 +18,15 @@ import {
 import { getErrorMessage } from '@/utils/errors';
 
 const shopLinks: NavigationItem[] = [
-  { label: 'Luxury Collection', href: '/categories/luxury-collection' },
-  { label: 'Festive Collection', href: '/categories/festive-collection' },
-  { label: 'Wedding Collection', href: '/categories/wedding-collection' },
-  { label: 'Gift Boxes', href: '/categories/gift-boxes' },
+  { label: 'Flower Candles', href: '/categories/flower-candles' },
+  { label: 'T-light Candles', href: '/categories/t-light-candles' },
+  { label: 'Acrylic Jar Candles', href: '/categories/acrylic-jar-candles' },
+  { label: 'Sweet Candles', href: '/categories/sweet-candles' },
+  { label: 'Sculptural Candles', href: '/categories/sculptural-candles' },
 ];
 
 const supportLinks: NavigationItem[] = [
+  { label: 'Track order', href: '/track-order' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Privacy', href: '/privacy' },
   { label: 'Terms', href: '/terms' },

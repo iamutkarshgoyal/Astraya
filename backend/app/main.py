@@ -11,6 +11,8 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
+settings.validate_production_security()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,

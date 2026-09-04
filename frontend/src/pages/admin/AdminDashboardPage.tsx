@@ -9,7 +9,9 @@ import {
   Mail,
   MapPin,
   PackagePlus,
+  Pencil,
   Trash2,
+  Truck,
   Users,
 } from 'lucide-react';
 import { Link } from 'react-router';
@@ -23,6 +25,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { adminService } from '@/services/admin-service';
+import type { Product } from '@/types/catalog';
 import { getErrorMessage } from '@/utils/errors';
 import { customizationSummary } from '@/utils/customization';
 import { formatPrice } from '@/utils/money';
@@ -39,13 +42,14 @@ const tabs: { id: AdminTab; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'messages', label: 'Messages', icon: Inbox },
 ];
 
-const orderStatuses = ['pending_whatsapp', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled'];
+const orderStatuses = ['payment_pending', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled'];
 
 export function AdminDashboardPage() {
   const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [refreshKey, setRefreshKey] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
+  const [editingProductId, setEditingProductId] = useState<number | null>(null);
 
   const dashboard = useAsyncData(
     async () => {
@@ -170,6 +174,41 @@ export function AdminDashboardPage() {
       'Product created.',
     );
     event.currentTarget.reset();
+  }
+
+  async function saveProductDetails(event: FormEvent<HTMLFormElement>, product: Product) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const imageUrls = String(form.get('image_urls') ?? '')
+      .split('\n')
+      .map((url) => url.trim())
+      .filter(Boolean);
+    await runAdminAction(
+      () =>
+        adminService.updateProduct(product.id, {
+          category_id: Number(form.get('category_id')),
+          name: String(form.get('name') ?? product.name),
+          sku: String(form.get('sku') ?? product.sku),
+          short_description: String(form.get('short_description') ?? product.short_description),
+          description: String(form.get('description') ?? product.description),
+          price: Number(form.get('price') ?? product.price),
+          discount_price: form.get('discount_price')
+            ? Number(form.get('discount_price'))
+            : null,
+          stock_quantity: Number(form.get('stock_quantity') ?? product.stock_quantity),
+          fragrance: String(form.get('fragrance') ?? product.fragrance ?? ''),
+          dimensions: String(form.get('dimensions') ?? product.dimensions ?? ''),
+          is_active: form.get('is_active') === 'on',
+          images: imageUrls.map((image_url, index) => ({
+            image_url,
+            alt_text: `${String(form.get('name') ?? product.name)} product image ${index + 1}`,
+            display_order: index,
+            is_primary: index === 0,
+          })),
+        }).then(() => undefined),
+      'Product details updated.',
+    );
+    setEditingProductId(null);
   }
 
   const data = dashboard.data;
@@ -314,26 +353,81 @@ export function AdminDashboardPage() {
                       </td>
                       <td className="p-3">{product.is_active ? 'Yes' : 'No'}</td>
                       <td className="p-3">
-                        <Button
-                          aria-label="Deactivate product"
-                          size="icon"
-                          type="button"
-                          variant="ghost"
-                          onClick={() =>
-                            void runAdminAction(
-                              () => adminService.deleteProduct(product.id),
-                              'Product deactivated.',
-                            )
-                          }
-                        >
-                          <Trash2 size={17} aria-hidden="true" />
-                        </Button>
+                        <div className="flex gap-1">
+                          <Button
+                            aria-label={`Edit ${product.name}`}
+                            size="icon"
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setEditingProductId(product.id)}
+                          >
+                            <Pencil size={17} aria-hidden="true" />
+                          </Button>
+                          <Button
+                            aria-label="Remove product from shop"
+                            size="icon"
+                            type="button"
+                            variant="ghost"
+                            onClick={() =>
+                              void runAdminAction(
+                                () => adminService.deleteProduct(product.id),
+                                'Product removed from the storefront. Order history is retained.',
+                              )
+                            }
+                          >
+                            <Trash2 size={17} aria-hidden="true" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+            {data.products
+              .filter((product) => product.id === editingProductId)
+              .map((product) => (
+                <form
+                  key={product.id}
+                  className="grid gap-4 rounded-lg border border-astraya-gold/45 bg-astraya-ivory p-5 shadow-sm"
+                  onSubmit={(event) => void saveProductDetails(event, product)}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="flex items-center gap-2 font-serif text-3xl text-astraya-navy">
+                      <Pencil size={22} aria-hidden="true" />
+                      Edit product
+                    </h2>
+                    <Button size="sm" type="button" variant="outline" onClick={() => setEditingProductId(null)}>
+                      Cancel
+                    </Button>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <Input defaultValue={product.name} name="name" placeholder="Product name" required />
+                    <Input defaultValue={product.sku} name="sku" placeholder="SKU" required />
+                    <select className="h-11 rounded-md border border-astraya-navy/15 bg-white px-3 text-sm" defaultValue={product.category_id} name="category_id">
+                      {data.categories.map((category) => (
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                      ))}
+                    </select>
+                    <Input defaultValue={product.price} min="1" name="price" placeholder="Marked price" required type="number" />
+                    <Input defaultValue={product.discount_price ?? ''} min="1" name="discount_price" placeholder="Discounted price" type="number" />
+                    <Input defaultValue={product.stock_quantity} min="0" name="stock_quantity" placeholder="Boxes in stock" required type="number" />
+                    <Input defaultValue={product.fragrance ?? ''} name="fragrance" placeholder="Fragrance" />
+                    <Input defaultValue={product.dimensions ?? ''} name="dimensions" placeholder="Dimensions" />
+                    <label className="flex items-center gap-2 text-sm font-semibold text-astraya-navy">
+                      <input defaultChecked={product.is_active} name="is_active" type="checkbox" />
+                      Visible on storefront
+                    </label>
+                  </div>
+                  <Input defaultValue={product.short_description} name="short_description" placeholder="Short description" required />
+                  <Textarea defaultValue={product.description} name="description" placeholder="Full description" required />
+                  <label className="grid gap-2 text-sm font-semibold text-astraya-navy">
+                    Product image URLs — one image per line, first image is the main product photo
+                    <Textarea defaultValue={product.images.map((image) => image.image_url).join('\n')} name="image_urls" required />
+                  </label>
+                  <Button className="w-fit" type="submit" variant="gold">Save product changes</Button>
+                </form>
+              ))}
           </section>
         )}
 
@@ -471,10 +565,11 @@ export function AdminDashboardPage() {
                   ))}
                 </div>
 
-                <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+                <div className="mt-4 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
                   <div className="text-xs leading-5 text-astraya-text/62">
-                    <p>Email notification: {order.email_notification_status ?? 'not attempted'}</p>
-                    <p>WhatsApp notification: {order.whatsapp_notification_status ?? 'not attempted'}</p>
+                    <p>Payment: {order.payment_method} · {order.payment_status}</p>
+                    <p>Owner email: {order.email_notification_status ?? 'not attempted'} · Owner WhatsApp: {order.whatsapp_notification_status ?? 'not attempted'}</p>
+                    <p>Customer email: {order.customer_email_notification_status ?? 'not attempted'} · WhatsApp: {order.customer_whatsapp_notification_status ?? 'not attempted'} · SMS: {order.customer_sms_notification_status ?? 'not attempted'}</p>
                     {order.notification_error && (
                       <p className="mt-1 text-red-700">{order.notification_error}</p>
                     )}
@@ -495,6 +590,49 @@ export function AdminDashboardPage() {
                     ))}
                   </select>
                 </div>
+                <form
+                  className="mt-5 grid gap-3 rounded-md bg-astraya-ivory p-4 md:grid-cols-[10rem_1fr_1fr_auto] md:items-end"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    const form = new FormData(event.currentTarget);
+                    const carrier = String(form.get('carrier') ?? 'dtdc') as 'dtdc' | 'blue_dart' | 'other';
+                    void runAdminAction(
+                      () =>
+                        adminService.updateOrderTracking(order.id, {
+                          carrier,
+                          tracking_number: String(form.get('tracking_number') ?? ''),
+                          tracking_url: String(form.get('tracking_url') ?? '') || null,
+                        }).then(() => undefined),
+                      'Tracking saved and customer delivery notifications queued.',
+                    );
+                  }}
+                >
+                  <label className="grid gap-1 text-xs font-bold uppercase tracking-[0.1em] text-astraya-navy">
+                    Carrier
+                    <select className="h-11 rounded-md border border-astraya-navy/15 bg-white px-3 text-sm normal-case tracking-normal" defaultValue={order.tracking_carrier ?? 'dtdc'} name="carrier">
+                      <option value="dtdc">DTDC</option>
+                      <option value="blue_dart">Blue Dart</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1 text-xs font-bold uppercase tracking-[0.1em] text-astraya-navy">
+                    Tracking number
+                    <Input defaultValue={order.tracking_number ?? ''} name="tracking_number" placeholder="Enter consignment number" required />
+                  </label>
+                  <label className="grid gap-1 text-xs font-bold uppercase tracking-[0.1em] text-astraya-navy">
+                    Custom tracking link
+                    <Input defaultValue={order.tracking_carrier === 'other' ? order.tracking_url ?? '' : ''} name="tracking_url" placeholder="Required for Other" type="url" />
+                  </label>
+                  <Button type="submit" variant="gold">
+                    <Truck size={16} aria-hidden="true" />
+                    Send tracking
+                  </Button>
+                  {order.tracking_url && (
+                    <p className="text-xs text-astraya-text/64 md:col-span-4">
+                      Active tracking: <a className="underline hover:text-astraya-darkGold" href={order.tracking_url} rel="noreferrer" target="_blank">{order.tracking_number}</a>
+                    </p>
+                  )}
+                </form>
               </article>
             ))}
           </section>

@@ -1,73 +1,40 @@
-import type { CandleVisual } from '@/types/customization';
-
 export type HeroCandleProduct = {
+  alt: string;
   id: string;
   image: string;
   name: string;
-  slug: string;
-  visual: CandleVisual;
 };
 
 export const HERO_CANDLE_PRODUCTS: HeroCandleProduct[] = [
   {
-    id: 'lunar-bloom',
-    image: '/assets/astraya/products/hero/lunar-bloom.jpg',
-    name: 'Lunar Bloom',
-    slug: 'lunar-bloom-soy-candle',
-    visual: {
-      id: 'lunar-bloom',
-      label: 'LUNAR BLOOM',
-      waxColor: '#e9c6d0',
-      decoration: 'daisy',
-      decorationColor: '#f7efdc',
-      glitter: false,
-      vesselColor: '#dbe8e2',
-    },
+    alt: 'Pink and orange HeartGlow gel-soy mini jar candles on a studio table',
+    id: 'heartglow-mini-jars',
+    image: '/assets/astraya/products/real/heartglow-mini-jars.jpg',
+    name: 'HeartGlow mini jars',
   },
   {
-    id: 'celestial-hearts',
-    image: '/assets/astraya/products/hero/celestial-hearts.jpg',
-    name: 'Celestial Hearts',
-    slug: 'celestial-oud-jar-candle',
-    visual: {
-      id: 'celestial-hearts',
-      label: 'CELESTIAL HEARTS',
-      waxColor: '#eee2ca',
-      decoration: 'hearts',
-      decorationColor: '#c8607e',
-      glitter: false,
-      vesselColor: '#c8dad8',
-    },
+    alt: 'Hand-poured gold glitter gel candle with a warm flame',
+    id: 'glitter-gel-jar',
+    image: '/assets/astraya/products/real/glitter-gel-jar.jpg',
+    name: 'Glitter gel jar',
   },
   {
-    id: 'solstice-spice',
-    image: '/assets/astraya/products/hero/solstice-spice.jpg',
-    name: 'Solstice Spice',
-    slug: 'solstice-spice-candle',
-    visual: {
-      id: 'solstice-spice',
-      label: 'SOLSTICE SPICE',
-      waxColor: '#d8a16c',
-      decoration: 'petals',
-      decorationColor: '#f1d2a5',
-      glitter: true,
-      vesselColor: '#d6c3ab',
-    },
+    alt: 'Rose pink layered gel-soy candle in a clear glass jar',
+    id: 'layered-gel-rose',
+    image: '/assets/astraya/products/real/layered-gel-rose.jpg',
+    name: 'Layered gel-soy jar',
   },
   {
-    id: 'heartglow',
-    image: '/assets/astraya/products/hero/heartglow.jpg',
-    name: 'HeartGlow',
-    slug: 'heartglow-gel-soy-mini-jar-candle',
-    visual: {
-      id: 'heartglow',
-      label: 'HEARTGLOW',
-      waxColor: '#f0d8c9',
-      decoration: 'hearts',
-      decorationColor: '#ef7f98',
-      glitter: true,
-      vesselColor: '#d7e8e4',
-    },
+    alt: 'Blue star t-light candles with a hand-finished gold shimmer',
+    id: 'star-tealights-blue',
+    image: '/assets/astraya/products/real/star-tealights-blue.jpg',
+    name: 'Star t-lights',
+  },
+  {
+    alt: 'Pastel bubble cube candles arranged with delicate white flowers',
+    id: 'pastel-bubble-cubes',
+    image: '/assets/astraya/products/real/pastel-bubble-cubes.jpg',
+    name: 'Pastel bubble cubes',
   },
 ];
 

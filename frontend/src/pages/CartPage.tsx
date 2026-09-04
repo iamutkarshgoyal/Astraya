@@ -106,6 +106,10 @@ export function CartPage() {
                 <dd>{formatPrice(totals.shipping)}</dd>
               </div>
               <div className="flex justify-between">
+                <dt>COD handling</dt>
+                <dd>{formatPrice(totals.codCharge)}</dd>
+              </div>
+              <div className="flex justify-between">
                 <dt>Tax</dt>
                 <dd>{formatPrice(totals.tax)}</dd>
               </div>
@@ -114,6 +118,9 @@ export function CartPage() {
                 <dd>{formatPrice(totals.grandTotal)}</dd>
               </div>
             </dl>
+            <p className="mt-4 text-xs leading-5 text-astraya-text/62">
+              Shipping is estimated at ₹160 here and will update to ₹100 at checkout for Uttar Pradesh, Delhi, Assam, and Jammu & Kashmir. Choose online payment to remove the ₹29 COD fee.
+            </p>
             <Button asChild className="mt-6 w-full" variant="gold">
               <Link to="/checkout">Checkout</Link>
             </Button>

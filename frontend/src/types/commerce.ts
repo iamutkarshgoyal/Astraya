@@ -29,6 +29,8 @@ export type OrderCreatePayload = {
   pincode: string;
   special_instructions?: string | null;
   coupon_code?: string | null;
+  payment_method: 'cod' | 'online';
+  policy_accepted: boolean;
   items: OrderItemCreate[];
 };
 
@@ -56,12 +58,29 @@ export type Order = {
   special_instructions?: string | null;
   subtotal: number | string;
   shipping_charge: number | string;
+  cod_charge: number | string;
   tax_amount: number | string;
   discount_amount: number | string;
   grand_total: number | string;
+  payment_method: string;
+  payment_status: string;
+  gateway_order_id?: string | null;
+  gateway_payment_id?: string | null;
+  payment_expires_at?: string | null;
+  policy_accepted: boolean;
+  policy_accepted_at?: string | null;
   status: string;
+  tracking_carrier?: string | null;
+  tracking_number?: string | null;
+  tracking_url?: string | null;
   email_notification_status?: string;
   whatsapp_notification_status?: string;
+  customer_email_notification_status?: string;
+  customer_whatsapp_notification_status?: string;
+  customer_sms_notification_status?: string;
+  tracking_email_notification_status?: string;
+  tracking_whatsapp_notification_status?: string;
+  tracking_sms_notification_status?: string;
   notification_error?: string | null;
   items: OrderItem[];
   created_at: string;
@@ -69,8 +88,32 @@ export type Order = {
 
 export type OrderCreateResponse = {
   order: Order;
-  whatsapp_url: string;
-  whatsapp_message: string;
+  requires_payment: boolean;
+  razorpay_checkout?: RazorpayCheckout | null;
+};
+
+export type RazorpayCheckout = {
+  key_id: string;
+  order_id: string;
+  amount: number;
+  currency: string;
+};
+
+export type OrderTrackingItem = {
+  product_name: string;
+  quantity: number;
+};
+
+export type OrderTracking = {
+  order_number: string;
+  status: string;
+  payment_method: string;
+  payment_status: string;
+  tracking_carrier?: string | null;
+  tracking_number?: string | null;
+  tracking_url?: string | null;
+  items: OrderTrackingItem[];
+  created_at: string;
 };
 
 export type Review = {

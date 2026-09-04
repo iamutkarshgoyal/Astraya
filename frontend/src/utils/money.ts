@@ -25,18 +25,45 @@ export function calculateCartSubtotal(items: CartLine[]): number {
   return items.reduce((sum, item) => sum + activePrice(item.product) * item.quantity, 0);
 }
 
-export function calculateClientTotals(items: CartLine[], couponCode?: string) {
+const priorityShippingStates = new Set([
+  'assam',
+  'delhi',
+  'jammu and kashmir',
+  'jammu & kashmir',
+  'jammu kashmir',
+  'jammu-kashmir',
+  'j&k',
+  'nct of delhi',
+  'new delhi',
+  'u.p.',
+  'up',
+  'uttar pradesh',
+]);
+
+export function shippingChargeForState(state?: string): number {
+  const normalizedState = state?.trim().toLocaleLowerCase().replace(/\s+/g, ' ') ?? '';
+  return priorityShippingStates.has(normalizedState) ? 100 : 160;
+}
+
+export function calculateClientTotals(
+  items: CartLine[],
+  couponCode?: string,
+  state?: string,
+  paymentMethod: 'cod' | 'online' = 'cod',
+) {
   const subtotal = calculateCartSubtotal(items);
   const discount = couponCode?.trim().toUpperCase() === 'ASTRAYA10' ? subtotal * 0.1 : 0;
   const taxable = Math.max(subtotal - discount, 0);
-  const shipping = taxable >= 2500 || taxable === 0 ? 0 : 99;
+  const shipping = taxable === 0 ? 0 : shippingChargeForState(state);
+  const codCharge = paymentMethod === 'cod' ? 29 : 0;
   const tax = taxable * 0.05;
-  const grandTotal = taxable + shipping + tax;
+  const grandTotal = taxable + shipping + codCharge + tax;
 
   return {
     subtotal,
     discount,
     shipping,
+    codCharge,
     tax,
     grandTotal,
   };

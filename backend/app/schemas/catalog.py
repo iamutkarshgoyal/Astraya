@@ -192,9 +192,16 @@ def _read_attr(value: Any, name: str, default: Any = None) -> Any:
 
 
 def _product_image_payload(image: Any, cdn_url: str) -> dict[str, Any]:
+    stored_url = _read_attr(image, "image_url", cdn_url)
+    image_url = (
+        stored_url
+        if isinstance(stored_url, str)
+        and stored_url.startswith(("/assets/", "http://", "https://"))
+        else cdn_url
+    )
     return {
         "id": _read_attr(image, "id"),
-        "image_url": cdn_url,
+        "image_url": image_url,
         "alt_text": _read_attr(image, "alt_text", "Astraya candle product image"),
         "display_order": _read_attr(image, "display_order", 0),
         "is_primary": _read_attr(image, "is_primary", False),

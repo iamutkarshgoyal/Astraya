@@ -17,6 +17,7 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { ShopPage } from '@/pages/ShopPage';
 import { SignupPage } from '@/pages/SignupPage';
 import { StaticPage } from '@/pages/StaticPage';
+import { TrackOrderPage } from '@/pages/TrackOrderPage';
 import { WishlistPage } from '@/pages/WishlistPage';
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
 
@@ -73,6 +74,10 @@ export const appRouter = createBrowserRouter([
       {
         path: 'order-success/:orderNumber',
         element: <OrderSuccessPage />,
+      },
+      {
+        path: 'track-order',
+        element: <TrackOrderPage />,
       },
       {
         path: 'about',

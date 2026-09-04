@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+import hmac
 from hashlib import sha256
 from typing import Any
 
@@ -21,6 +22,14 @@ def get_password_hash(password: str) -> str:
 
 def hash_token(token: str) -> str:
     return sha256(token.encode("utf-8")).hexdigest()
+
+
+def hash_owner_otp(code: str) -> str:
+    return hmac.new(
+        settings.secret_key.encode("utf-8"),
+        f"owner-otp:{code}".encode("utf-8"),
+        sha256,
+    ).hexdigest()
 
 
 def create_token(
@@ -55,6 +64,15 @@ def create_refresh_token(subject: str) -> str:
         subject=subject,
         token_type="refresh",
         expires_delta=timedelta(days=settings.refresh_token_expire_days),
+    )
+
+
+def create_owner_access_token() -> str:
+    return create_token(
+        subject=settings.owner_admin_phone,
+        token_type="owner_access",
+        expires_delta=timedelta(minutes=settings.owner_access_token_minutes),
+        extra_claims={"scope": "owner_admin"},
     )
 
 

@@ -96,6 +96,14 @@ export const adminService = {
     return response.data;
   },
 
+  async updateOrderTracking(
+    id: number,
+    payload: { carrier: 'dtdc' | 'blue_dart' | 'other'; tracking_number: string; tracking_url?: string | null },
+  ): Promise<Order> {
+    const response = await api.patch<Order>(`/admin/orders/${id}/tracking`, payload);
+    return response.data;
+  },
+
   async listCustomers(): Promise<User[]> {
     const response = await api.get<User[]>('/admin/customers');
     return response.data;

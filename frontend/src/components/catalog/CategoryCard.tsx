@@ -18,7 +18,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
         <SmartImage
           alt={category.name}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-          src={category.image_url ?? '/images/categories/signature-collection.jpg'}
+          src={category.image_url ?? '/assets/astraya/products/daisy-fragrance-candle/colour-detail.jpg'}
         />
       </div>
       <div className="flex flex-1 flex-col p-5">

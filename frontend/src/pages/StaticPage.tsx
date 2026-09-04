@@ -7,7 +7,7 @@ const content = {
     sections: [
       [
         'How are orders confirmed?',
-        'After checkout, Astraya opens WhatsApp with your order details for studio confirmation.',
+        'COD orders are confirmed immediately. Secure online orders are confirmed after payment verification. Order and delivery updates are sent by email, WhatsApp, and SMS when those services are available.',
       ],
       [
         'How should I burn the candle?',
@@ -41,7 +41,11 @@ const content = {
       ],
       [
         'Order confirmation',
-        'Orders are confirmed after Astraya receives the WhatsApp confirmation message.',
+        'COD orders are confirmed at checkout. Online orders are confirmed only after secure payment verification.',
+      ],
+      [
+        'Returns and exchanges',
+        'Because Astraya items are soft and handmade, returns are not accepted. Record an unboxing video immediately after delivery. An exchange can be considered only for a clear colour difference or an incorrect product received.',
       ],
       ['Availability', 'Stock can change during studio preparation for handmade batches.'],
     ],

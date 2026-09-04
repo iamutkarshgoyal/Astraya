@@ -13,7 +13,7 @@ export function CategoriesPage() {
         <SectionHeading
           eyebrow="Categories"
           title="Shop by collection"
-          text="Every Astraya collection is shaped around occasion, fragrance mood, and finish."
+          text="Browse every Astraya piece by candle form, finish, and gifting style."
         />
         {categories.error && (
           <EmptyState

@@ -15,46 +15,39 @@ from app.models.user import User
 
 SEED_CATEGORIES = [
     {
-        "name": "Luxury Collection",
-        "slug": "luxury-collection",
-        "description": "Polished glass jars, layered fragrances, and gift-ready finishes.",
-        "image_url": "/images/categories/luxury-collection.jpg",
+        "name": "Flower Candles",
+        "slug": "flower-candles",
+        "description": "Hand-poured floral candles for bright, thoughtful gifting.",
+        "image_url": "/assets/astraya/products/daisy-fragrance-candle/colour-detail.jpg",
         "display_order": 1,
     },
     {
-        "name": "Festive Collection",
-        "slug": "festive-collection",
-        "description": "Warm celebration scents designed for gifting and gatherings.",
-        "image_url": "/images/categories/festive-collection.jpg",
+        "name": "T-light Candles",
+        "slug": "t-light-candles",
+        "description": "Small decorative T-lights for celebrations, tables, and gifting.",
+        "image_url": "/assets/astraya/products/pink-heart-t-light-candle/heart-detail.jpg",
         "display_order": 2,
     },
     {
-        "name": "Wedding Collection",
-        "slug": "wedding-collection",
-        "description": "Elegant favors and ceremony candles for intimate celebrations.",
-        "image_url": "/images/categories/wedding-collection.jpg",
+        "name": "Acrylic Jar Candles",
+        "slug": "acrylic-jar-candles",
+        "description": "Mini acrylic jar candles with colourful hand-finished details.",
+        "image_url": "/assets/astraya/products/two-inch-mini-acrylic-jar-candle/available-designs.jpg",
         "display_order": 3,
     },
     {
-        "name": "Gift Boxes",
-        "slug": "gift-boxes",
-        "description": "Curated candle sets wrapped for effortless premium gifting.",
-        "image_url": "/images/categories/gift-boxes.jpg",
+        "name": "Sweet Candles",
+        "slug": "sweet-candles",
+        "description": "Playful dessert-inspired candle boxes for festive gifting.",
+        "image_url": "/assets/astraya/products/motichoor-laddu-candle/four-piece-detail.jpg",
         "display_order": 4,
     },
     {
-        "name": "Aromatherapy",
-        "slug": "aromatherapy",
-        "description": "Clean, calming blends for rituals, rest, and quiet evenings.",
-        "image_url": "/images/categories/aromatherapy.jpg",
+        "name": "Sculptural Candles",
+        "slug": "sculptural-candles",
+        "description": "Modern statement candles in playful, gift-ready forms.",
+        "image_url": "/assets/astraya/products/pastel-bubble-cube-candle/box.jpg",
         "display_order": 5,
-    },
-    {
-        "name": "Signature Collection",
-        "slug": "signature-collection",
-        "description": "Astraya's core celestial scents for everyday luxury.",
-        "image_url": "/images/categories/signature-collection.jpg",
-        "display_order": 6,
     },
 ]
 
@@ -117,6 +110,278 @@ SEED_PRODUCTS = [
         "is_featured": True,
         "is_best_seller": True,
         "image_count": 8,
+    },
+    {
+        "category_slug": "t-light-candles",
+        "name": "Sage Green Star T-light Candle Box",
+        "slug": "sage-green-star-t-light-candle-box",
+        "sku": "AST-STAR-TLIGHT-SAGE-BOX",
+        "short_description": "A gift-ready box of three sage-green star T-light candles.",
+        "description": "A white window box containing three handmade sage-green star T-light candles, finished with green glitter accents. Each box is ready to gift or style as a small celestial detail.",
+        "price": Decimal("120.00"),
+        "discount_price": Decimal("100.00"),
+        "stock_quantity": 2,
+        "wax_type": "Wax blend",
+        "fragrance": "Colour: Sage Green",
+        "ingredients": "Wax, cotton wick, glitter accents",
+        "is_featured": True,
+        "is_best_seller": False,
+        "image_specs": [
+            {
+                "image_url": "/assets/astraya/products/star-t-lights/sage-green-box.jpg",
+                "alt_text": "Sage green Star T-light candle box with three candles",
+                "display_order": 0,
+                "is_primary": True,
+            },
+            {
+                "image_url": "/assets/astraya/products/star-t-lights/sage-green-single.jpg",
+                "alt_text": "Single sage green Star T-light candle",
+                "display_order": 1,
+                "is_primary": False,
+            },
+        ],
+    },
+    {
+        "category_slug": "t-light-candles",
+        "name": "Sky Blue Star T-light Candle Box",
+        "slug": "sky-blue-star-t-light-candle-box",
+        "sku": "AST-STAR-TLIGHT-SKYBLUE-BOX",
+        "short_description": "A gift-ready box of three sky-blue star T-light candles.",
+        "description": "A white window box containing three handmade sky-blue star T-light candles, finished with blue glitter accents. Each box is ready to gift or style as a small celestial detail.",
+        "price": Decimal("120.00"),
+        "discount_price": Decimal("100.00"),
+        "stock_quantity": 2,
+        "wax_type": "Wax blend",
+        "fragrance": "Colour: Sky Blue",
+        "ingredients": "Wax, cotton wick, glitter accents",
+        "is_featured": True,
+        "is_best_seller": False,
+        "image_specs": [
+            {
+                "image_url": "/assets/astraya/products/star-t-lights/skyblue-box.jpg",
+                "alt_text": "Sky-blue Star T-light candle box with three candles",
+                "display_order": 0,
+                "is_primary": True,
+            },
+            {
+                "image_url": "/assets/astraya/products/star-t-lights/skyblue-single.jpg",
+                "alt_text": "Single sky-blue Star T-light candle",
+                "display_order": 1,
+                "is_primary": False,
+            },
+        ],
+    },
+    {
+        "category_slug": "sweet-candles",
+        "name": "Motichoor Laddu Candle Box",
+        "slug": "motichoor-laddu-candle-box",
+        "sku": "AST-MOTICHOOR-LADDU-BOX",
+        "short_description": "A festive pink box of four Motichoor Laddu-shaped candles.",
+        "description": "A festive pink box holding four Motichoor Laddu-inspired wax candles, each finished with a cotton wick and silver foil-style accents. This four-piece box is handmade for gifting and celebrations.",
+        "price": Decimal("180.00"),
+        "discount_price": Decimal("150.00"),
+        "stock_quantity": 2,
+        "wax_type": "Wax blend",
+        "fragrance": "Motichoor Laddu-inspired",
+        "ingredients": "Wax, cotton wick, silver foil-style decorative accents",
+        "is_featured": True,
+        "is_best_seller": False,
+        "image_specs": [
+            {
+                "image_url": "/assets/astraya/products/motichoor-laddu-candle/box.jpg",
+                "alt_text": "Motichoor Laddu candle box with four candles",
+                "display_order": 0,
+                "is_primary": True,
+            },
+            {
+                "image_url": "/assets/astraya/products/motichoor-laddu-candle/four-piece-detail.jpg",
+                "alt_text": "Four Motichoor Laddu-shaped candles",
+                "display_order": 1,
+                "is_primary": False,
+            },
+        ],
+    },
+    {
+        "category_slug": "flower-candles",
+        "name": "Rose Fragrance Candle Box",
+        "slug": "rose-fragrance-candle-box",
+        "sku": "AST-ROSE-FRAGRANCE-BOX",
+        "short_description": "A white window box of three rose-fragrance candles.",
+        "description": "A white window box holding three hand-poured rose-fragrance wax candles in soft pink and peach tones. This three-piece box is handmade for gifting and celebrations.",
+        "price": Decimal("180.00"),
+        "discount_price": Decimal("150.00"),
+        "stock_quantity": 1,
+        "wax_type": "Wax blend",
+        "fragrance": "Rose",
+        "ingredients": "Wax, cotton wick, rose fragrance oil",
+        "is_featured": True,
+        "is_best_seller": False,
+        "image_specs": [
+            {
+                "image_url": "/assets/astraya/products/rose-fragrance-candle/box.jpg",
+                "alt_text": "Rose Fragrance Candle Box with three rose candles",
+                "display_order": 0,
+                "is_primary": True,
+            },
+            {
+                "image_url": "/assets/astraya/products/rose-fragrance-candle/three-piece-detail.jpg",
+                "alt_text": "Three Rose Fragrance candles in pink and peach",
+                "display_order": 1,
+                "is_primary": False,
+            },
+        ],
+    },
+    {
+        "category_slug": "sculptural-candles",
+        "name": "Pastel Bubble Cube Candle Box",
+        "slug": "pastel-bubble-cube-candle-box",
+        "sku": "AST-PASTEL-BUBBLE-CUBE-BOX",
+        "short_description": "A bright pink gift box of four pastel bubble-cube candles.",
+        "description": "A bright pink box holding four hand-poured pastel bubble-cube candles in orange, yellow, pink, and mint green. This four-piece box is handmade for gifting and celebrations.",
+        "price": Decimal("240.00"),
+        "discount_price": Decimal("200.00"),
+        "stock_quantity": 1,
+        "wax_type": "Wax blend",
+        "fragrance": "Pastel colour assortment",
+        "ingredients": "Wax, cotton wick",
+        "is_featured": True,
+        "is_best_seller": False,
+        "image_specs": [
+            {
+                "image_url": "/assets/astraya/products/pastel-bubble-cube-candle/box.jpg",
+                "alt_text": "Pastel Bubble Cube Candle Box with four candles",
+                "display_order": 0,
+                "is_primary": True,
+            },
+            {
+                "image_url": "/assets/astraya/products/pastel-bubble-cube-candle/colour-detail.jpg",
+                "alt_text": "Pink and blue Pastel Bubble Cube candles",
+                "display_order": 1,
+                "is_primary": False,
+            },
+        ],
+    },
+    {
+        "category_slug": "flower-candles",
+        "name": "Daisy Fragrance Candle Box",
+        "slug": "daisy-fragrance-candle-box",
+        "sku": "AST-DAISY-FRAGRANCE-BOX",
+        "short_description": "A white window box of three colourful daisy fragrance candles.",
+        "description": "A white window box holding three hand-poured daisy-shaped candles in orange, green, and pink. This three-piece scented box is handmade for gifting and celebrations.",
+        "price": Decimal("180.00"),
+        "discount_price": Decimal("150.00"),
+        "stock_quantity": 3,
+        "wax_type": "Soy wax",
+        "fragrance": "Daisy fragrance",
+        "ingredients": "Soy wax, cotton wick, fragrance oil",
+        "is_featured": True,
+        "is_best_seller": False,
+        "image_specs": [
+            {
+                "image_url": "/assets/astraya/products/daisy-fragrance-candle/box.jpg",
+                "alt_text": "Daisy Fragrance Candle Box with three colourful candles",
+                "display_order": 0,
+                "is_primary": True,
+            },
+            {
+                "image_url": "/assets/astraya/products/daisy-fragrance-candle/colour-detail.jpg",
+                "alt_text": "Colourful Daisy Fragrance candle assortment",
+                "display_order": 1,
+                "is_primary": False,
+            },
+        ],
+    },
+    {
+        "category_slug": "acrylic-jar-candles",
+        "name": "1-Inch Mini Acrylic Jar Candle Box with Mini Flowers",
+        "slug": "mini-acrylic-jar-candle-box",
+        "sku": "AST-MINI-ACRYLIC-JAR-FLOWER-BOX",
+        "short_description": "A white window box of three 1-inch mini acrylic jar candles with tiny flower decorations.",
+        "description": "A white window box holding three 1-inch mini acrylic jar candles filled with white wax and finished with tiny peach and purple flower decorations. This three-piece fragranced box is handmade for gifting and celebrations.",
+        "price": Decimal("180.00"),
+        "discount_price": Decimal("150.00"),
+        "stock_quantity": 3,
+        "wax_type": "Wax blend",
+        "fragrance": "Fragranced",
+        "ingredients": "Wax, cotton wick, mini wax flower decorations, fragrance oil",
+        "dimensions": "1 inch height",
+        "is_featured": True,
+        "is_best_seller": False,
+        "image_specs": [
+            {
+                "image_url": "/assets/astraya/products/mini-acrylic-jar-candle/box.jpg",
+                "alt_text": "1-Inch Mini Acrylic Jar Candle Box with three jars",
+                "display_order": 0,
+                "is_primary": True,
+            },
+            {
+                "image_url": "/assets/astraya/products/mini-acrylic-jar-candle/jar-detail.jpg",
+                "alt_text": "Mini Acrylic Jar Candle with peach and purple mini flowers",
+                "display_order": 1,
+                "is_primary": False,
+            },
+        ],
+    },
+    {
+        "category_slug": "t-light-candles",
+        "name": "Pink Heart T-light Candle Box",
+        "slug": "pink-heart-t-light-candle-box",
+        "sku": "AST-PINK-HEART-TLIGHT-BOX",
+        "short_description": "A white window box of ten pink heart T-light candles.",
+        "description": "A white window box containing ten handmade pink heart-shaped T-light candles in clear heart cups. This ten-piece box is made for gifting, celebrations, and romantic table settings.",
+        "price": Decimal("264.00"),
+        "discount_price": Decimal("220.00"),
+        "stock_quantity": 3,
+        "wax_type": "Wax blend",
+        "fragrance": "Colour: Pink",
+        "ingredients": "Wax, cotton wick, clear heart cup",
+        "is_featured": True,
+        "is_best_seller": False,
+        "image_specs": [
+            {
+                "image_url": "/assets/astraya/products/pink-heart-t-light-candle/box.jpg",
+                "alt_text": "Pink Heart T-light Candle Box with ten candles",
+                "display_order": 0,
+                "is_primary": True,
+            },
+            {
+                "image_url": "/assets/astraya/products/pink-heart-t-light-candle/heart-detail.jpg",
+                "alt_text": "Two pink heart T-light candles in clear cups",
+                "display_order": 1,
+                "is_primary": False,
+            },
+        ],
+    },
+    {
+        "category_slug": "acrylic-jar-candles",
+        "name": "2-Inch Mini Acrylic Jar Candle Assorted Pair Box",
+        "slug": "two-inch-mini-acrylic-jar-candle-assorted-pair-box",
+        "sku": "AST-2IN-MINI-ACRYLIC-JAR-PAIR",
+        "short_description": "A two-piece box of 2-inch mini acrylic jar candles, assorted by availability.",
+        "description": "A gift-ready box of two 2-inch mini acrylic jar candles selected from the available colourful flower, heart, rose, butterfly, and glitter designs. Each box contains any two available designs; the exact pair is chosen at packing time.",
+        "price": Decimal("180.00"),
+        "discount_price": Decimal("150.00"),
+        "stock_quantity": 3,
+        "wax_type": "Wax blend",
+        "fragrance": "Assorted fragranced designs",
+        "ingredients": "Wax, cotton wick, acrylic jar, wax decorations, fragrance oil",
+        "dimensions": "2 inch height",
+        "is_featured": True,
+        "is_best_seller": False,
+        "image_specs": [
+            {
+                "image_url": "/assets/astraya/products/two-inch-mini-acrylic-jar-candle/box.jpg",
+                "alt_text": "2-Inch Mini Acrylic Jar Candle Assorted Pair Box",
+                "display_order": 0,
+                "is_primary": True,
+            },
+            {
+                "image_url": "/assets/astraya/products/two-inch-mini-acrylic-jar-candle/available-designs.jpg",
+                "alt_text": "Available designs for the 2-Inch Mini Acrylic Jar Candle pair",
+                "display_order": 1,
+                "is_primary": False,
+            },
+        ],
     },
     {
         "category_slug": "festive-collection",
@@ -209,21 +474,23 @@ def sync_seed_product_images(
     product_name: str,
     product_slug: str,
     image_count: int = 2,
+    image_specs: list[dict[str, object]] | None = None,
 ) -> None:
     images = sorted(product.images, key=lambda image: image.display_order)
-    image_specs = [
-        {
-            "image_url": f"{product_slug}/{image_index}.jpg",
-            "alt_text": (
-                f"{product_name} product image"
-                if image_index == 1
-                else f"{product_name} colour view {image_index}"
-            ),
-            "display_order": image_index - 1,
-            "is_primary": image_index == 1,
-        }
-        for image_index in range(1, image_count + 1)
-    ]
+    if image_specs is None:
+        image_specs = [
+            {
+                "image_url": f"{product_slug}/{image_index}.jpg",
+                "alt_text": (
+                    f"{product_name} product image"
+                    if image_index == 1
+                    else f"{product_name} colour view {image_index}"
+                ),
+                "display_order": image_index - 1,
+                "is_primary": image_index == 1,
+            }
+            for image_index in range(1, image_count + 1)
+        ]
 
     for image in images:
         image.is_primary = False
@@ -258,6 +525,12 @@ def seed_admin(db: Session) -> User:
 
 def seed_categories(db: Session) -> dict[str, Category]:
     categories: dict[str, Category] = {}
+    active_slugs = {str(payload["slug"]) for payload in SEED_CATEGORIES}
+
+    for category in db.scalars(select(Category)):
+        if category.slug not in active_slugs:
+            category.is_active = False
+
     for payload in SEED_CATEGORIES:
         category = db.scalar(select(Category).where(Category.slug == payload["slug"]))
         if not category:
@@ -273,17 +546,33 @@ def seed_categories(db: Session) -> dict[str, Category]:
 
 
 def seed_products(db: Session, categories: dict[str, Category], admin: User) -> None:
-    for index, payload in enumerate(SEED_PRODUCTS, start=1):
+    active_payloads = [
+        payload
+        for payload in SEED_PRODUCTS
+        if payload["category_slug"] in categories
+    ]
+    active_slugs = {str(payload["slug"]) for payload in active_payloads}
+
+    for existing_product in db.scalars(select(Product)):
+        existing_product.is_active = existing_product.slug in active_slugs
+
+    for index, payload in enumerate(active_payloads, start=1):
         product_data = payload.copy()
         category_slug = str(product_data.pop("category_slug"))
         image_count = int(product_data.pop("image_count", 2))
+        image_specs = product_data.pop("image_specs", None)
         product = db.scalar(select(Product).where(Product.slug == product_data["slug"]))
         if product:
+            product.category_id = categories[category_slug].id
+            for field, value in product_data.items():
+                setattr(product, field, value)
+            product.is_active = True
             sync_seed_product_images(
                 product,
                 str(product_data["name"]),
                 str(product_data["slug"]),
                 image_count,
+                image_specs,
             )
             continue
 
@@ -293,6 +582,7 @@ def seed_products(db: Session, categories: dict[str, Category], admin: User) -> 
             str(product_data["name"]),
             str(product_data["slug"]),
             image_count,
+            image_specs,
         )
         db.add(product)
         db.flush()

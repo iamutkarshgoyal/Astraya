@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from urllib.parse import quote
+
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -10,7 +12,7 @@ from app.models.newsletter import NewsletterSubscriber
 from app.models.order import Order
 from app.models.product import Product
 from app.models.user import User
-from app.schemas.admin import AdminStats, OrderStatusUpdate
+from app.schemas.admin import AdminStats, OrderStatusUpdate, OrderTrackingUpdate
 from app.schemas.catalog import (
     CategoryCreate,
     CategoryRead,
@@ -30,6 +32,8 @@ from app.services.catalog_service import (
     product_query,
     update_product,
 )
+from app.services.order_notification_service import send_tracking_notifications
+from app.services.order_service import cancel_and_restock_order
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -166,9 +170,50 @@ def admin_update_order_status(
     )
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
-    order.status = payload.status
+    if payload.status == "cancelled":
+        cancel_and_restock_order(db, order)
+    else:
+        order.status = payload.status
+        db.commit()
+    db.refresh(order)
+    return order
+
+
+@router.patch("/orders/{order_id}/tracking", response_model=OrderRead)
+def admin_update_order_tracking(
+    order_id: int,
+    payload: OrderTrackingUpdate,
+    background_tasks: BackgroundTasks,
+    _: User = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+) -> Order:
+    order = db.scalar(
+        select(Order).options(selectinload(Order.items)).where(Order.id == order_id)
+    )
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    encoded_number = quote(payload.tracking_number.strip(), safe="")
+    if payload.tracking_url is not None:
+        tracking_url = str(payload.tracking_url)
+    elif payload.carrier == "dtdc":
+        tracking_url = f"https://www.dtdc.in/tracking.asp?strCnno={encoded_number}"
+    else:
+        tracking_url = (
+            "https://www.bluedart.com/trackdartresult?trackFor=0&trackNo="
+            f"{encoded_number}"
+        )
+
+    order.tracking_carrier = payload.carrier
+    order.tracking_number = payload.tracking_number.strip()
+    order.tracking_url = tracking_url
+    order.status = "shipped"
+    order.tracking_email_notification_status = "pending"
+    order.tracking_whatsapp_notification_status = "pending"
+    order.tracking_sms_notification_status = "pending"
     db.commit()
     db.refresh(order)
+    background_tasks.add_task(send_tracking_notifications, order.id)
     return order
 
 

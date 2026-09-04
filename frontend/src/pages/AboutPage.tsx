@@ -3,8 +3,6 @@ import { Flame, Gift, Leaf, MoonStar, Sparkles } from 'lucide-react';
 import { SmartImage } from '@/components/media/SmartImage';
 import { Reveal } from '@/components/sections/Reveal';
 import { SectionHeading } from '@/components/sections/SectionHeading';
-import { useAsyncData } from '@/hooks/useAsyncData';
-import { catalogService } from '@/services/catalog-service';
 
 const standards = [
   {
@@ -45,16 +43,6 @@ const storyCards = [
 ];
 
 export function AboutPage() {
-  const { data } = useAsyncData(
-    async () => catalogService.listProducts({ featured: true }),
-    [],
-  );
-  const productsForImages = data?.items ?? [];
-  const imageForProduct = (slug: string, imageIndex = 0) => {
-    const product = productsForImages.find((item) => item.slug === slug);
-    return product?.images[imageIndex]?.image_url ?? product?.primary_image_url ?? product?.images[0]?.image_url;
-  };
-
   return (
     <div>
       <section className="bg-astraya-card py-16">
@@ -80,7 +68,7 @@ export function AboutPage() {
               <SmartImage
                 alt="Astraya candle studio"
                 className="aspect-[4/3] w-full rounded-lg border border-astraya-border object-cover shadow-card"
-                src={imageForProduct('lunar-bloom-soy-candle', 1)}
+                src="/assets/astraya/products/real/pastel-bubble-cubes.jpg"
               />
               <div className="absolute -bottom-5 left-5 hidden rounded-lg border border-astraya-gold/40 bg-astraya-navy px-4 py-3 text-astraya-gold shadow-glow sm:flex sm:items-center sm:gap-2">
                 <MoonStar size={18} aria-hidden="true" />
@@ -123,8 +111,8 @@ export function AboutPage() {
           <Reveal>
             <div className="relative aspect-[4/5] overflow-hidden rounded-lg border border-astraya-border shadow-card">
               <SmartImage
-                alt="Astraya handcrafted candle"
-                src={imageForProduct('celestial-oud-jar-candle', 1)}
+                alt="Astraya layered gel-soy candle"
+                src="/assets/astraya/products/real/layered-gel-rose.jpg"
               />
             </div>
           </Reveal>

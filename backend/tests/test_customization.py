@@ -55,9 +55,10 @@ def test_order_requires_valid_mobile_and_indian_pincode() -> None:
         "email": "customer@example.com",
         "address": "12 Moon Street",
         "city": "Jaipur",
-        "state": "Rajasthan",
-        "pincode": "302001",
-        "items": [{"product_id": 1, "quantity": 1}],
+            "state": "Rajasthan",
+            "pincode": "302001",
+            "policy_accepted": True,
+            "items": [{"product_id": 1, "quantity": 1}],
     }
     assert OrderCreate.model_validate(payload).pincode == "302001"
 

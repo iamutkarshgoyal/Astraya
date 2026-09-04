@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     password_reset_token_expire_minutes: int = 30
     expose_password_reset_token: bool = True
     owner_whatsapp_phone: str = "918958383707"
+    owner_admin_phone: str = "918958383707"
+    owner_access_token_minutes: int = 480
+    owner_otp_expire_minutes: int = 10
+    owner_otp_resend_seconds: int = 60
     owner_notification_email: str = ""
     smtp_host: str = ""
     smtp_port: int = 587
@@ -42,7 +46,20 @@ class Settings(BaseSettings):
     whatsapp_api_version: str = "v23.0"
     whatsapp_order_template_name: str = ""
     whatsapp_template_language: str = "en_US"
-    default_shipping_charge: int = 99
+    whatsapp_customer_order_template_name: str = ""
+    whatsapp_customer_tracking_template_name: str = ""
+    sms_provider: str = ""
+    twilio_account_sid: str = ""
+    twilio_auth_token: str = ""
+    twilio_from_phone: str = ""
+    owner_sms_phone: str = ""
+    razorpay_key_id: str = ""
+    razorpay_key_secret: str = ""
+    razorpay_webhook_secret: str = ""
+    online_payment_hold_minutes: int = 15
+    shipping_charge_priority_states: int = 100
+    shipping_charge_standard_states: int = 160
+    cod_charge: int = 29
     tax_rate_percent: int = 5
     admin_email: str = "admin@astraya.in"
     admin_password: str = "Admin@12345"
@@ -97,6 +114,27 @@ class Settings(BaseSettings):
     @property
     def notification_email(self) -> str:
         return (self.owner_notification_email or self.admin_email).strip()
+
+    def validate_production_security(self) -> None:
+        if not self.is_production:
+            return
+        unsafe_values = {
+            "change-this-before-production",
+            "admin@astraya.in",
+            "admin@12345",
+            "",
+        }
+        configured_values = {
+            self.secret_key.strip().casefold(),
+            self.admin_email.strip().casefold(),
+            self.admin_password.strip().casefold(),
+        }
+        if configured_values & unsafe_values:
+            raise RuntimeError(
+                "Production requires a unique SECRET_KEY, ADMIN_EMAIL, and ADMIN_PASSWORD"
+            )
+        if not self.owner_admin_phone.strip():
+            raise RuntimeError("Production requires OWNER_ADMIN_PHONE for owner OTP access")
 
 
 settings = Settings()
