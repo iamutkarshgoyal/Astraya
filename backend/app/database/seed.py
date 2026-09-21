@@ -525,22 +525,12 @@ def seed_admin(db: Session) -> User:
 
 def seed_categories(db: Session) -> dict[str, Category]:
     categories: dict[str, Category] = {}
-    active_slugs = {str(payload["slug"]) for payload in SEED_CATEGORIES}
-
-    for category in db.scalars(select(Category)):
-        if category.slug not in active_slugs:
-            category.is_active = False
-
     for payload in SEED_CATEGORIES:
         category = db.scalar(select(Category).where(Category.slug == payload["slug"]))
         if not category:
             category = Category(**payload)
             db.add(category)
             db.flush()
-        else:
-            for field, value in payload.items():
-                setattr(category, field, value)
-            category.is_active = True
         categories[category.slug] = category
     return categories
 
@@ -551,11 +541,6 @@ def seed_products(db: Session, categories: dict[str, Category], admin: User) -> 
         for payload in SEED_PRODUCTS
         if payload["category_slug"] in categories
     ]
-    active_slugs = {str(payload["slug"]) for payload in active_payloads}
-
-    for existing_product in db.scalars(select(Product)):
-        existing_product.is_active = existing_product.slug in active_slugs
-
     for index, payload in enumerate(active_payloads, start=1):
         product_data = payload.copy()
         category_slug = str(product_data.pop("category_slug"))
@@ -563,17 +548,7 @@ def seed_products(db: Session, categories: dict[str, Category], admin: User) -> 
         image_specs = product_data.pop("image_specs", None)
         product = db.scalar(select(Product).where(Product.slug == product_data["slug"]))
         if product:
-            product.category_id = categories[category_slug].id
-            for field, value in product_data.items():
-                setattr(product, field, value)
-            product.is_active = True
-            sync_seed_product_images(
-                product,
-                str(product_data["name"]),
-                str(product_data["slug"]),
-                image_count,
-                image_specs,
-            )
+            # Admin-managed catalog values must survive application restarts.
             continue
 
         product = Product(category_id=categories[category_slug].id, **product_data)
