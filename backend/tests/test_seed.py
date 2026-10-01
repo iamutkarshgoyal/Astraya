@@ -49,6 +49,8 @@ def test_current_catalog_seed_uses_only_active_product_categories_and_sale_price
     assert {product["slug"] for product in products} == {
         "sage-green-star-t-light-candle-box",
         "sky-blue-star-t-light-candle-box",
+        "assorted-butterfly-t-light-candle-box",
+        "floral-round-t-light-candle-box",
         "motichoor-laddu-candle-box",
         "rose-fragrance-candle-box",
         "pastel-bubble-cube-candle-box",
@@ -57,8 +59,16 @@ def test_current_catalog_seed_uses_only_active_product_categories_and_sale_price
         "pink-heart-t-light-candle-box",
         "two-inch-mini-acrylic-jar-candle-assorted-pair-box",
     }
+    no_discount_prices = {
+        "sage-green-star-t-light-candle-box": Decimal("150.00"),
+        "sky-blue-star-t-light-candle-box": Decimal("150.00"),
+        "assorted-butterfly-t-light-candle-box": Decimal("150.00"),
+        "floral-round-t-light-candle-box": Decimal("200.00"),
+    }
     assert all(
         product["price"] == product["discount_price"] * Decimal("1.20")
+        if product["discount_price"] is not None
+        else product["price"] == no_discount_prices[product["slug"]]
         for product in products
     )
 
@@ -69,3 +79,27 @@ def test_current_catalog_seed_uses_only_active_product_categories_and_sale_price
     )
     assert assorted_pair["stock_quantity"] == 3
     assert "any two available designs" in assorted_pair["description"]
+
+
+def test_t_light_box_prices_quantities_and_images() -> None:
+    products = {product["slug"]: product for product in SEED_PRODUCTS}
+
+    for slug in (
+        "sage-green-star-t-light-candle-box",
+        "sky-blue-star-t-light-candle-box",
+        "assorted-butterfly-t-light-candle-box",
+    ):
+        assert products[slug]["price"] == Decimal("150.00")
+        assert products[slug]["discount_price"] is None
+
+    butterfly = products["assorted-butterfly-t-light-candle-box"]
+    assert butterfly["stock_quantity"] == 10
+    assert "four" in butterfly["short_description"].lower()
+    assert len(butterfly["image_specs"]) == 3
+
+    round_t_lights = products["floral-round-t-light-candle-box"]
+    assert round_t_lights["price"] == Decimal("200.00")
+    assert round_t_lights["discount_price"] is None
+    assert round_t_lights["stock_quantity"] == 10
+    assert "ten" in round_t_lights["short_description"].lower()
+    assert len(round_t_lights["image_specs"]) == 2
