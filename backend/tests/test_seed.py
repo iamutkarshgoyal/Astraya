@@ -1,6 +1,16 @@
 from decimal import Decimal
 
-from app.database.seed import SEED_CATEGORIES, SEED_PRODUCTS, sync_seed_product_images
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
+
+from app.database.base import Base
+from app.database.seed import (
+    SEED_CATEGORIES,
+    SEED_PRODUCTS,
+    apply_required_catalog_updates,
+    sync_seed_product_images,
+)
+from app.models.category import Category
 from app.models.product import Product
 from app.models.product_image import ProductImage
 
@@ -103,3 +113,51 @@ def test_t_light_box_prices_quantities_and_images() -> None:
     assert round_t_lights["stock_quantity"] == 10
     assert "ten" in round_t_lights["short_description"].lower()
     assert len(round_t_lights["image_specs"]) == 2
+
+
+def test_required_catalog_updates_publish_existing_t_light_prices() -> None:
+    engine = create_engine("sqlite://")
+    Base.metadata.create_all(engine)
+    with Session(engine) as db:
+        category = Category(name="T-light Candles", slug="t-light-candles")
+        db.add(category)
+        db.flush()
+        db.add_all(
+            [
+                Product(
+                    category_id=category.id,
+                    name="Sage Star",
+                    slug="sage-green-star-t-light-candle-box",
+                    sku="STAR",
+                    short_description="Star",
+                    description="Star",
+                    price=Decimal("100.00"),
+                    discount_price=Decimal("90.00"),
+                    stock_quantity=7,
+                    is_active=False,
+                ),
+                Product(
+                    category_id=category.id,
+                    name="Lavender Butterfly",
+                    slug="lavender-shimmer-butterfly-t-light-candle-box",
+                    sku="BUTTERFLY",
+                    short_description="Butterfly",
+                    description="Butterfly",
+                    price=Decimal("100.00"),
+                    stock_quantity=9,
+                ),
+            ]
+        )
+        db.flush()
+
+        apply_required_catalog_updates(db)
+        db.flush()
+
+        products = {product.slug: product for product in db.scalars(select(Product))}
+        assert products["sage-green-star-t-light-candle-box"].price == Decimal("150.00")
+        assert products["sage-green-star-t-light-candle-box"].discount_price is None
+        assert products["sage-green-star-t-light-candle-box"].is_active is True
+        assert products["sage-green-star-t-light-candle-box"].stock_quantity == 7
+        assert products["lavender-shimmer-butterfly-t-light-candle-box"].price == Decimal("150.00")
+        assert products["lavender-shimmer-butterfly-t-light-candle-box"].stock_quantity == 9
+    engine.dispose()

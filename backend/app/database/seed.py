@@ -535,6 +535,16 @@ REVIEW_COPY = [
 ]
 
 
+REQUIRED_CATALOG_PRICE_UPDATES = {
+    "sage-green-star-t-light-candle-box": Decimal("150.00"),
+    "sky-blue-star-t-light-candle-box": Decimal("150.00"),
+    "lavender-shimmer-butterfly-t-light-candle-box": Decimal("150.00"),
+    "peach-glow-butterfly-t-light-candle-box": Decimal("150.00"),
+    "assorted-butterfly-t-light-candle-box": Decimal("150.00"),
+    "floral-round-t-light-candle-box": Decimal("200.00"),
+}
+
+
 def sync_seed_product_images(
     product: Product,
     product_name: str,
@@ -641,12 +651,24 @@ def seed_products(db: Session, categories: dict[str, Category], admin: User) -> 
         )
 
 
+def apply_required_catalog_updates(db: Session) -> None:
+    """Publish explicitly approved catalog corrections without resetting admin data."""
+    products = db.scalars(
+        select(Product).where(Product.slug.in_(REQUIRED_CATALOG_PRICE_UPDATES))
+    )
+    for product in products:
+        product.price = REQUIRED_CATALOG_PRICE_UPDATES[product.slug]
+        product.discount_price = None
+        product.is_active = True
+
+
 def run_seed() -> None:
     db = SessionLocal()
     try:
         admin = seed_admin(db)
         categories = seed_categories(db)
         seed_products(db, categories, admin)
+        apply_required_catalog_updates(db)
         db.commit()
     finally:
         db.close()
