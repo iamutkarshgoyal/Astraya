@@ -4,7 +4,6 @@ import { Outlet, ScrollRestoration, useLocation } from 'react-router';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SeoMetadata } from '@/components/layout/SeoMetadata';
-import { cn } from '@/utils/cn';
 
 export function RootLayout() {
   const location = useLocation();
@@ -17,7 +16,7 @@ export function RootLayout() {
       <AnimatePresence mode="wait">
         <motion.main
           key={location.pathname}
-          className={cn('flex-1', location.pathname !== '/' && 'pt-20')}
+          className="flex-1"
           initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
           exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}

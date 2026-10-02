@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Heart, Menu, Search, ShoppingBag, UserRound, X } from 'lucide-react';
+import { Heart, HelpCircle, Menu, Search, ShoppingBag, UserRound, X } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router';
 
 import { BrandMark } from '@/components/brand/BrandMark';
@@ -12,69 +12,67 @@ import type { NavigationItem } from '@/types/navigation';
 import { cn } from '@/utils/cn';
 
 const primaryNavigation: NavigationItem[] = [
-  { label: 'Home', href: '/' },
   { label: 'Shop', href: '/shop' },
-  { label: 'Categories', href: '/categories' },
-  { label: 'Track order', href: '/track-order' },
+  { label: 'Collections', href: '/categories' },
+  { label: 'Gifting', href: '/categories/gift-boxes' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];
 
-function navLinkClass(isOverHero: boolean) {
+function navLinkClass() {
   return ({ isActive }: { isActive: boolean }) =>
     cn(
-      'group relative font-button text-[0.78rem] font-semibold uppercase tracking-[0.16em] transition-colors after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-astraya-gold after:transition-transform hover:after:scale-x-100',
-      isOverHero ? 'text-white/80 hover:text-astraya-gold' : 'text-astraya-navy/80 hover:text-astraya-darkGold',
+      'group relative font-button text-[0.78rem] font-medium tracking-[0.04em] text-astraya-navy/80 transition-colors after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:origin-center after:scale-x-0 after:bg-astraya-gold after:transition-transform hover:text-astraya-gold hover:after:scale-x-100',
       isActive && 'text-astraya-gold after:scale-x-100',
     );
 }
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
   const location = useLocation();
   const prefersReducedMotion = useReducedMotion();
   const { isAuthenticated, logout, user } = useAuth();
   const { itemCount } = useCart();
   const { wishlistCount } = useWishlist();
   const accountHref = user?.role === 'admin' ? '/admin' : '/profile';
-  const isOverHero = location.pathname === '/' && !hasScrolled;
-
-  useEffect(() => {
-    const updateScrollState = () => setHasScrolled(window.scrollY > 8);
-    updateScrollState();
-    window.addEventListener('scroll', updateScrollState, { passive: true });
-    return () => window.removeEventListener('scroll', updateScrollState);
-  }, []);
-
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
   return (
-    <header
-      className={cn(
-        'fixed inset-x-0 top-0 z-50 border-b transition-all duration-300',
-        hasScrolled
-          ? 'border-astraya-border/85 bg-astraya-ivory/88 shadow-card backdrop-blur-xl'
-          : 'border-transparent bg-transparent',
-      )}
-    >
-      <div className="container flex min-h-20 items-center justify-between gap-4">
-        <BrandMark inverse={isOverHero} />
+    <header className="sticky inset-x-0 top-0 z-50 border-b border-astraya-border/70 bg-astraya-ivory/96 backdrop-blur-xl">
+      <div className="bg-astraya-navy text-white">
+        <div className="container flex h-9 items-center justify-center text-center font-button text-[0.65rem] tracking-[0.08em] sm:justify-between">
+          <span className="hidden items-center gap-2 sm:inline-flex">
+            <span className="h-px w-5 bg-white/35" />
+            Hand-poured in India
+          </span>
+          <p>Complimentary shipping on orders over ₹999</p>
+          <Link className="hidden items-center gap-1.5 transition hover:text-astraya-cream sm:inline-flex" to="/contact">
+            <HelpCircle size={13} aria-hidden="true" />
+            Get help
+          </Link>
+        </div>
+      </div>
 
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary navigation">
-          {primaryNavigation.map((item) => (
-            <NavLink key={item.href} className={navLinkClass(isOverHero)} to={item.href}>
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+      <div className="container grid min-h-[78px] grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <div className="hidden items-center gap-1 lg:flex">
+          <Button asChild size="icon" variant="ghost" aria-label={isAuthenticated ? 'Open account' : 'Log in'}>
+            <Link to={isAuthenticated ? accountHref : '/login'}><UserRound size={19} aria-hidden="true" /></Link>
+          </Button>
+          <Button asChild className="relative" size="icon" variant="ghost" aria-label="Open wishlist">
+            <Link to="/wishlist">
+              <Heart size={19} aria-hidden="true" />
+              {wishlistCount > 0 && <span className="absolute right-0 top-0 grid h-4 min-w-4 place-items-center rounded-full bg-astraya-gold px-1 text-[0.58rem] font-bold text-white">{wishlistCount}</span>}
+            </Link>
+          </Button>
+        </div>
 
-        <div className="hidden items-center gap-2 lg:flex">
+        <BrandMark />
+
+        <div className="hidden items-center justify-end gap-1 lg:flex">
           <Button
             asChild
-            className={cn(isOverHero && 'text-white hover:text-astraya-gold')}
             size="icon"
             variant="ghost"
             aria-label="Search Astraya"
@@ -85,23 +83,7 @@ export function SiteHeader() {
           </Button>
           <Button
             asChild
-            className={cn('relative', isOverHero && 'text-white hover:text-astraya-gold')}
-            size="icon"
-            variant="ghost"
-            aria-label="Open wishlist"
-          >
-            <Link to="/wishlist">
-              <Heart size={19} aria-hidden="true" />
-              {wishlistCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-astraya-gold px-1 text-[0.65rem] font-bold text-astraya-ink">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
-          </Button>
-          <Button
-            asChild
-            className={cn('relative', isOverHero && 'text-white hover:text-astraya-gold')}
+            className="relative"
             size="icon"
             variant="ghost"
             aria-label="Open cart"
@@ -109,36 +91,16 @@ export function SiteHeader() {
             <Link to="/cart">
               <ShoppingBag size={19} aria-hidden="true" />
               {itemCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-astraya-gold px-1 text-[0.65rem] font-bold text-astraya-ink">
+                <span className="absolute right-0 top-0 grid h-4 min-w-4 place-items-center rounded-full bg-astraya-gold px-1 text-[0.58rem] font-bold text-white">
                   {itemCount}
                 </span>
               )}
             </Link>
           </Button>
-          {isAuthenticated ? (
-            <>
-              <Button asChild variant="outline">
-                <Link to={accountHref}>
-                  <UserRound size={18} aria-hidden="true" />
-                  Account
-                </Link>
-              </Button>
-              <Button variant="primary" onClick={logout}>
-                Sign out
-              </Button>
-            </>
-          ) : (
-            <Button asChild variant="primary">
-              <Link to="/login">
-                <UserRound size={18} aria-hidden="true" />
-                Login
-              </Link>
-            </Button>
-          )}
         </div>
 
         <Button
-          className={cn('lg:hidden', isOverHero && 'text-white hover:text-astraya-gold')}
+          className="justify-self-end lg:hidden"
           size="icon"
           variant="ghost"
           aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -149,10 +111,16 @@ export function SiteHeader() {
         </Button>
       </div>
 
+      <nav className="hidden h-12 items-center justify-center gap-9 border-t border-astraya-border/55 lg:flex" aria-label="Primary navigation">
+        {primaryNavigation.map((item) => (
+          <NavLink key={item.href} className={navLinkClass()} to={item.href}>{item.label}</NavLink>
+        ))}
+      </nav>
+
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="border-t border-astraya-border bg-astraya-card/96 shadow-card backdrop-blur-xl lg:hidden"
+            className="border-t border-astraya-border bg-astraya-ivory shadow-card lg:hidden"
             initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
             animate={prefersReducedMotion ? undefined : { height: 'auto', opacity: 1 }}
             exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
@@ -162,7 +130,7 @@ export function SiteHeader() {
               {primaryNavigation.map((item) => (
                 <NavLink
                   key={item.href}
-                  className="rounded-md px-3 py-3 font-button text-sm font-semibold uppercase tracking-[0.12em] text-astraya-navy transition hover:bg-astraya-ivory hover:text-astraya-darkGold"
+                  className="border-b border-astraya-border/60 px-1 py-3 font-button text-sm font-medium tracking-[0.04em] text-astraya-navy transition hover:text-astraya-gold"
                   to={item.href}
                   onClick={() => setIsMenuOpen(false)}
                 >

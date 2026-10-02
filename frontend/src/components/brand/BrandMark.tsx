@@ -7,33 +7,19 @@ type BrandMarkProps = {
 
 export function BrandMark({ compact = false, inverse = false }: BrandMarkProps) {
   return (
-    <Link className="group inline-flex items-center gap-3" to="/" aria-label="Astraya home">
-      <span className="relative h-11 w-11 overflow-hidden rounded-full border border-astraya-gold/65 bg-astraya-navy shadow-glow transition duration-300 group-hover:-translate-y-0.5 group-hover:border-astraya-gold">
-        <img
-          alt=""
-          aria-hidden="true"
-          className="h-full w-full object-cover"
-          decoding="async"
-          height="44"
-          loading="eager"
-          src="/assets/astraya/logo/astraya-logo.jpg"
-          width="44"
-        />
+    <Link className="group inline-flex flex-col items-center" to="/" aria-label="Astraya home">
+      <span
+        className={
+          inverse
+            ? 'font-display text-3xl font-medium uppercase leading-none tracking-[0.3em] text-white'
+            : 'font-display text-3xl font-medium uppercase leading-none tracking-[0.3em] text-astraya-navy'
+        }
+      >
+        Astraya
       </span>
       {!compact && (
-        <span className="flex flex-col">
-          <span
-            className={
-              inverse
-                ? 'font-display text-2xl font-semibold leading-none tracking-[0.08em] text-white'
-                : 'font-display text-2xl font-semibold leading-none tracking-[0.08em] text-astraya-navy'
-            }
-          >
-            Astraya
-          </span>
-          <span className="font-button text-[0.64rem] font-semibold uppercase tracking-[0.24em] text-astraya-gold">
-            Inspired by the Cosmos
-          </span>
+        <span className="mt-1.5 font-button text-[0.52rem] font-medium uppercase tracking-[0.42em] text-astraya-gold">
+          Inspired by the Cosmos
         </span>
       )}
     </Link>

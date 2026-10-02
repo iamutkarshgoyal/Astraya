@@ -27,21 +27,19 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <motion.article
-      className="group grid h-full grid-rows-[auto_1fr] overflow-hidden rounded-lg border border-astraya-border bg-astraya-card shadow-sm transition-colors duration-300 hover:border-astraya-gold/70 hover:shadow-card"
+      className="group grid h-full grid-rows-[auto_1fr] overflow-hidden border border-astraya-border bg-white"
       style={{ transformStyle: 'preserve-3d' }}
       whileHover={
         prefersReducedMotion
           ? undefined
           : {
-              y: -6,
-              rotateX: 1.2,
-              rotateY: -1.2,
+              y: -3,
             }
       }
       transition={{ duration: 0.28, ease: 'easeOut' }}
     >
       <Link className="block" to={`/products/${product.slug}`}>
-        <div className="relative aspect-[4/3] overflow-hidden bg-astraya-cream">
+        <div className="relative aspect-square overflow-hidden bg-[#f8f6f1]">
           <SmartImage
             alt={productTitle}
             className="h-full w-full object-cover transition duration-700 group-hover:scale-105 group-hover:opacity-0"
@@ -55,43 +53,53 @@ export function ProductCard({ product }: ProductCardProps) {
               src={secondaryImageUrl}
             />
           )}
-          <div className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-astraya-gold transition-transform duration-500 group-hover:scale-x-100" />
+          <div className="absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-astraya-gold transition-transform duration-500 group-hover:scale-x-100" />
           <div className="absolute left-3 top-3 flex flex-wrap gap-2">
             {product.is_best_seller && (
-              <span className="rounded-sm bg-astraya-navy px-2 py-1 font-button text-[0.62rem] font-bold uppercase tracking-[0.12em] text-white">
+              <span className="bg-astraya-navy px-2.5 py-1.5 font-button text-[0.58rem] font-medium uppercase tracking-[0.14em] text-white">
                 Bestseller
               </span>
             )}
             {saving && (
-              <span className="rounded-sm bg-astraya-gold px-2 py-1 font-button text-[0.62rem] font-bold uppercase tracking-[0.12em] text-astraya-ink">
+              <span className="bg-astraya-gold px-2.5 py-1.5 font-button text-[0.58rem] font-medium uppercase tracking-[0.14em] text-white">
                 {saving}% off
               </span>
             )}
           </div>
+          <Button
+            aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
+            className={cn('absolute right-4 top-4 rounded-full border-astraya-ink/25 bg-white/90', wished && 'text-astraya-gold')}
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={(event) => {
+              event.preventDefault();
+              toggleWishlist(product);
+            }}
+          >
+            <Heart size={18} fill={wished ? 'currentColor' : 'none'} aria-hidden="true" />
+          </Button>
         </div>
       </Link>
-      <div className="grid h-full grid-rows-[1fr_auto_auto] gap-4 p-5">
+      <div className="grid h-full grid-rows-[1fr_auto_auto] gap-3 px-4 py-5">
         <div className="min-w-0">
-          <div className="mb-2 flex items-center gap-1 font-button text-xs font-semibold text-astraya-gold">
+          <div className="mb-2 flex items-center gap-1 font-button text-[0.68rem] font-medium text-astraya-gold">
             <Star size={14} fill="currentColor" aria-hidden="true" />
             <span>{product.average_rating.toFixed(1)}</span>
             <span className="text-astraya-text/45">({product.review_count})</span>
           </div>
           <Link to={`/products/${product.slug}`}>
-            <h3 className="line-clamp-2 font-display text-2xl font-semibold leading-tight text-astraya-navy transition hover:text-astraya-darkGold">
+            <h3 className="line-clamp-2 font-button text-base font-medium leading-snug text-astraya-ink transition hover:text-astraya-darkGold">
               {productTitle}
             </h3>
           </Link>
-          <p className="mt-1 line-clamp-1 font-button text-[0.68rem] font-semibold uppercase text-astraya-rose">
+          <p className="mt-1 line-clamp-1 font-button text-[0.62rem] font-medium uppercase tracking-[0.12em] text-astraya-gold">
             {product.fragrance ?? product.category.name}
-          </p>
-          <p className="mt-2 line-clamp-2 text-sm leading-6 text-astraya-text/68">
-            {product.short_description}
           </p>
         </div>
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="font-button text-lg font-bold text-astraya-navy">
+            <p className="font-button text-sm font-semibold text-astraya-navy">
               {formatPrice(activePrice(product))}
             </p>
             {product.discount_price && (
@@ -100,24 +108,11 @@ export function ProductCard({ product }: ProductCardProps) {
               </p>
             )}
           </div>
-          <Button
-            aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
-            className={cn(wished && 'bg-astraya-ivory text-astraya-gold')}
-            size="icon"
-            type="button"
-            variant="outline"
-            onClick={() => toggleWishlist(product)}
-          >
-            <Heart size={17} fill={wished ? 'currentColor' : 'none'} aria-hidden="true" />
-          </Button>
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          <Button asChild className="px-3 text-xs" variant="outline">
-            <Link to={`/products/${product.slug}`}>View details</Link>
-          </Button>
+        <div className="grid grid-cols-1 gap-2">
           <Button
             aria-label={`Add ${productTitle} to cart`}
-            className="px-3 text-xs"
+            className="w-full px-3 text-xs"
             disabled={product.stock_quantity < 1}
             type="button"
             variant="primary"

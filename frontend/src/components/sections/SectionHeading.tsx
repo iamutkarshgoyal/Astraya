@@ -14,23 +14,22 @@ export function SectionHeading({ eyebrow, title, text, action, className }: Sect
   return (
     <div
       className={cn(
-        'mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between',
+        'mb-9 grid gap-5 md:grid-cols-[1.25fr_0.75fr_auto] md:items-center',
         className,
       )}
     >
-      <div className="max-w-2xl">
+      <div>
         {eyebrow && (
-          <p className="mb-3 font-button text-xs font-bold uppercase tracking-[0.22em] text-astraya-gold">
+          <p className="mb-3 font-button text-[0.68rem] font-medium uppercase tracking-[0.24em] text-astraya-gold">
             {eyebrow}
           </p>
         )}
-        <div className="mb-4 h-px w-20 bg-astraya-gold/70" aria-hidden="true" />
-        <h2 className="font-display text-3xl font-semibold leading-tight tracking-[0.04em] text-astraya-navy md:text-5xl">
+        <h2 className="font-display text-4xl font-medium leading-tight text-astraya-gold md:text-5xl">
           {title}
         </h2>
-        {text && <p className="mt-3 text-base leading-7 text-astraya-text/70">{text}</p>}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {text && <p className="max-w-sm font-button text-sm leading-6 text-astraya-text/80 md:text-base">{text}</p>}
+      {action && <div className="shrink-0 md:justify-self-end">{action}</div>}
     </div>
   );
 }
