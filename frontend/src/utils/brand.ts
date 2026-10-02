@@ -5,6 +5,10 @@ export const ASTRAYA_WHATSAPP_URL = 'https://wa.me/918958383707';
 export const ASTRAYA_INSTAGRAM_HANDLE = '@astrayacandles';
 export const ASTRAYA_INSTAGRAM_URL = 'https://www.instagram.com/astrayacandles';
 
+export function scentedProductTitle(name: string) {
+  return /\bscented\b/i.test(name) ? name : `${name} – Scented`;
+}
+
 export function buildContactWhatsAppUrl(values: {
   name: string;
   email: string;

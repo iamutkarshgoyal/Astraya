@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/sections/EmptyState';
 import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
+import { scentedProductTitle } from '@/utils/brand';
 import { activePrice, calculateClientTotals, formatPrice } from '@/utils/money';
 import { customizationSummary } from '@/utils/customization';
 
@@ -53,7 +54,9 @@ export function CartPage() {
                 </div>
                 <div>
                   <Link to={`/products/${item.product.slug}`}>
-                    <h2 className="font-serif text-2xl text-astraya-navy">{item.product.name}</h2>
+                    <h2 className="font-serif text-2xl text-astraya-navy">
+                      {scentedProductTitle(item.product.name)}
+                    </h2>
                   </Link>
                   <p className="mt-2 text-sm leading-6 text-astraya-text/68">
                     {item.product.short_description}

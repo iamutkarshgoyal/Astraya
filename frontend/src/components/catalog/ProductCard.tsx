@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import type { Product } from '@/types/catalog';
+import { scentedProductTitle } from '@/utils/brand';
 import { activePrice, formatPrice, savingPercent } from '@/utils/money';
 import { cn } from '@/utils/cn';
 
@@ -22,6 +23,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const saving = savingPercent(product);
   const imageUrl = product.primary_image_url ?? product.images[0]?.image_url;
   const secondaryImageUrl = product.images.find((image) => image.image_url !== imageUrl)?.image_url;
+  const productTitle = scentedProductTitle(product.name);
 
   return (
     <motion.article
@@ -41,7 +43,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <Link className="block" to={`/products/${product.slug}`}>
         <div className="relative aspect-[4/3] overflow-hidden bg-astraya-cream">
           <SmartImage
-            alt={product.name}
+            alt={productTitle}
             className="h-full w-full object-cover transition duration-700 group-hover:scale-105 group-hover:opacity-0"
             src={imageUrl}
           />
@@ -77,7 +79,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
           <Link to={`/products/${product.slug}`}>
             <h3 className="line-clamp-2 font-display text-2xl font-semibold leading-tight text-astraya-navy transition hover:text-astraya-darkGold">
-              {product.name}
+              {productTitle}
             </h3>
           </Link>
           <p className="mt-1 line-clamp-1 font-button text-[0.68rem] font-semibold uppercase text-astraya-rose">
@@ -114,7 +116,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <Link to={`/products/${product.slug}`}>View details</Link>
           </Button>
           <Button
-            aria-label={`Add ${product.name} to cart`}
+            aria-label={`Add ${productTitle} to cart`}
             className="px-3 text-xs"
             disabled={product.stock_quantity < 1}
             type="button"

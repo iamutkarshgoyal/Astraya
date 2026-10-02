@@ -14,6 +14,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { orderService } from '@/services/order-service';
 import type { OrderCreateResponse, RazorpayCheckout } from '@/types/commerce';
+import { scentedProductTitle } from '@/utils/brand';
 import { getErrorMessage } from '@/utils/errors';
 import { activePrice, calculateClientTotals, formatPrice } from '@/utils/money';
 
@@ -315,7 +316,7 @@ export function CheckoutPage() {
               {items.map((item) => (
                 <div key={item.lineId} className="flex justify-between gap-4 text-sm">
                   <span>
-                    {item.product.name}
+                    {scentedProductTitle(item.product.name)}
                     {item.customization ? ' · Custom' : ''} x {item.quantity}
                   </span>
                   <span>{formatPrice(item.quantity * activePrice(item.product))}</span>

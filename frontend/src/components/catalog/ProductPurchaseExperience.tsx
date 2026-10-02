@@ -26,6 +26,7 @@ import type {
 } from '@/types/customization';
 import { cn } from '@/utils/cn';
 import { defaultCustomizationForProduct } from '@/utils/customization';
+import { scentedProductTitle } from '@/utils/brand';
 import { activePrice, formatPrice, savingPercent } from '@/utils/money';
 
 type ProductPurchaseExperienceProps = {
@@ -62,6 +63,7 @@ export function ProductPurchaseExperience({
   const supportsCustomization = false;
   const inventoryLabel = product.stock_quantity === 1 ? 'box' : 'boxes';
   const saving = savingPercent(product);
+  const productTitle = scentedProductTitle(product.name);
 
   useEffect(() => {
     setActiveImage(product.primary_image_url ?? images[0]?.image_url ?? null);
@@ -142,7 +144,7 @@ export function ProductPurchaseExperience({
           {product.category.name}
         </p>
         <h1 className="mt-3 font-display text-5xl leading-tight text-astraya-navy md:text-7xl">
-          {product.name}
+          {productTitle}
         </h1>
         <div className="mt-4 flex items-center gap-2 text-sm text-astraya-gold">
           <Star size={17} fill="currentColor" aria-hidden="true" />
